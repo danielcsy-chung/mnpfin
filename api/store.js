@@ -5,18 +5,18 @@
    allows 12 functions per deployment; we use 1. No cron jobs,
    no edge config, no ISR — nothing that requires Pro.
 
-   Storage: Vercel Blob ("digitalsatpestl-blob").
+   Storage: Vercel Blob ("digitalsatpestl-blob"), PRIVATE access —
+   nothing in the store is reachable without the read-write token.
    Env required: BLOB_READ_WRITE_TOKEN  (auto-injected by Vercel
                  when the Blob store is linked to the project)
    Env optional: MP_SECRET  (falls back to a value derived from
                  the blob token, so zero-config still works)
 
-   Blob paths are HMAC'd with the secret so that even though
-   Vercel Blob objects are public-by-URL, nobody can guess the
-   pathname of an account or token record.
+   Blob paths are additionally HMAC'd with the secret, so even a
+   leaked store id reveals no account or token pathnames.
    ============================================================ */
 
-import { put, list, del } from '@vercel/blob';
+import { put, list, del, get } from '@vercel/blob';
 import crypto from 'node:crypto';
 
 /* ---------- config ---------- */
@@ -71,22 +71,33 @@ function readSession(sid) {
 
 /* ---------- blob helpers ---------- */
 
+function isNotFound(e) {
+  return !!e && (e.name === 'BlobNotFoundError' ||
+                 /not.?found|does not exist/i.test(e.message || ''));
+}
+
 async function readJSON(pathname) {
-  const { blobs } = await list({ prefix: pathname, limit: 5 });
-  const hit = blobs.find(b => b.pathname === pathname);
-  if (!hit) return null;
-  const r = await fetch(hit.url + '?_=' + Date.now(), { cache: 'no-store' });
-  if (!r.ok) return null;
-  try { return await r.json(); } catch (e) { return null; }
+  let r;
+  try {
+    // useCache:false -> always read the latest from origin, never the CDN copy
+    r = await get(pathname, { access: 'private', useCache: false });
+  } catch (e) {
+    if (isNotFound(e)) return null;
+    throw e;                       // real failures must surface, not look like "missing"
+  }
+  if (!r || !r.stream) return null;
+  const text = await new Response(r.stream).text();
+  try { return JSON.parse(text); } catch (e) { return null; }
 }
 
 async function writeJSON(pathname, obj) {
   await put(pathname, JSON.stringify(obj), {
-    access: 'public',
+    access: 'private',
     contentType: 'application/json',
     addRandomSuffix: false,
-    allowOverwrite: true,
-    cacheControlMaxAge: 0
+    allowOverwrite: true
+    // NOTE: no cacheControlMaxAge — the SDK rejects anything under 60s,
+    // and reads already bypass the cache via useCache:false.
   });
   return obj;
 }
@@ -104,11 +115,7 @@ async function listAll(prefix) {
 
 async function readAll(prefix) {
   const blobs = await listAll(prefix);
-  const rows = await Promise.all(blobs.map(async b => {
-    const r = await fetch(b.url + '?_=' + Date.now(), { cache: 'no-store' });
-    if (!r.ok) return null;
-    try { return await r.json(); } catch (e) { return null; }
-  }));
+  const rows = await Promise.all(blobs.map(b => readJSON(b.pathname).catch(() => null)));
   return rows.filter(Boolean);
 }
 
@@ -190,8 +197,37 @@ async function resolve(sid) {
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
 
+  // Open /api/store in a browser to self-diagnose. Reports only booleans
+  // and counts — never the token itself.
   if (req.method === 'GET') {
-    return res.status(200).json({ ok: true, service: 'mortar-pestle', ts: Date.now() });
+    const out = {
+      ok: true,
+      service: 'mortar-pestle',
+      ts: Date.now(),
+      blobTokenPresent: !!process.env.BLOB_READ_WRITE_TOKEN,
+      secretConfigured: !!process.env.MP_SECRET,
+      deployment: process.env.VERCEL_ENV || 'unknown',
+      node: process.version
+    };
+    if (!out.blobTokenPresent) {
+      out.ok = false;
+      out.diagnosis = 'BLOB_READ_WRITE_TOKEN is not visible to this deployment. ' +
+        'Connect the blob store to THIS project, then redeploy — env vars are ' +
+        'baked in at build time, so an existing deployment will not pick it up.';
+      return res.status(200).json(out);
+    }
+    try {
+      const probe = await list({ limit: 1 });
+      out.blobReachable = true;
+      out.storeHasObjects = (probe.blobs || []).length > 0;
+      out.diagnosis = 'Healthy. Accounts and sync should work.';
+    } catch (e) {
+      out.ok = false;
+      out.blobReachable = false;
+      out.diagnosis = 'Token present but the store rejected the request: ' +
+        (e && e.message ? e.message : String(e));
+    }
+    return res.status(200).json(out);
   }
   if (req.method !== 'POST') {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
@@ -432,10 +468,7 @@ export default async function handler(req, res) {
         if (op === 'tokenDelete') {
           const t = normToken(body.token);
           if (t === MASTER_TOKEN) return res.status(400).json({ ok: false, error: 'The master key cannot be deleted.' });
-          const p = pathFor('tk', t);
-          const { blobs } = await list({ prefix: p, limit: 5 });
-          const hit = blobs.find(b => b.pathname === p);
-          if (hit) await del(hit.url);
+          await del(pathFor('tk', t)).catch(e => { if (!isNotFound(e)) throw e; });
           return res.status(200).json({ ok: true });
         }
 
@@ -464,9 +497,7 @@ export default async function handler(req, res) {
           if (!acc) return res.status(404).json({ ok: false, error: 'No such account.' });
           if (acc.token === MASTER_TOKEN) return res.status(400).json({ ok: false, error: 'The master account cannot be deleted.' });
           for (const p of [pathFor('ac', acc.username), pathFor('dt', acc.id)]) {
-            const { blobs } = await list({ prefix: p, limit: 5 });
-            const hit = blobs.find(b => b.pathname === p);
-            if (hit) await del(hit.url);
+            await del(p).catch(e => { if (!isNotFound(e)) throw e; });
           }
           const rec = await getToken(acc.token);
           if (rec) { rec.username = null; rec.accountId = null; rec.boundDeviceId = null; rec.boundAt = null; await saveToken(rec); }
