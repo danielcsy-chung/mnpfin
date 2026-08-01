@@ -192,7 +192,8 @@ p.sec-sub{font-size:12.5px;color:var(--text-on-ink-soft);margin:0 0 16px}
 .barline .bp{width:34px;text-align:right;font-family:var(--font-mono);font-size:11px;flex-shrink:0}
 
 /* ---------- tables ---------- */
-.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:26px}
+.stat-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:26px}
+@media (max-width:1080px){.stat-strip{grid-template-columns:repeat(3,1fr)}}
 @media (max-width:860px){.stat-strip{grid-template-columns:repeat(2,1fr)}}
 .stat{background:var(--paper);color:var(--text-on-paper);border:1px solid var(--paper-line);border-radius:var(--radius-m);padding:16px 18px}
 .stat .n{font-family:var(--font-mono);font-weight:600;font-size:27px;color:var(--verdigris-dark);line-height:1}
@@ -385,6 +386,149 @@ footer.foot{padding:26px 28px 40px;text-align:center;font-family:var(--font-mono
   color:var(--text-on-ink-soft);border-top:1px solid var(--ink-line)}
 footer.foot button{background:none;border:none;color:var(--brass);font-family:inherit;font-size:inherit;cursor:pointer;text-decoration:underline}
 
+/* ============================================================
+   v2 additions — accounts, quick practice, pause, notes, admin
+   ============================================================ */
+
+/* ---------- gate: steps + credit ---------- */
+.gate-step{display:none}.gate-step.active{display:block}
+.gate-switch{margin-top:16px;text-align:center}
+.gate-credit{margin-top:22px;padding-top:16px;border-top:1px dashed var(--paper-line);
+  text-align:center;font-family:var(--font-mono);font-size:10.5px;line-height:1.75;color:var(--stone)}
+.gate-credit a{color:var(--stone);text-decoration:none}
+.gate-credit a:hover{color:var(--verdigris-dark);text-decoration:underline}
+.gate-note{font-size:12px;line-height:1.55;color:var(--text-on-paper-soft);
+  background:var(--paper-dim);border:1px solid var(--paper-line);border-radius:var(--radius-s);
+  padding:11px 13px;margin:0 0 18px}
+.gate-note b{color:var(--text-on-paper)}
+.busy{opacity:.55;pointer-events:none}
+
+/* ---------- dashboard: D-day slab + quick practice ---------- */
+.dday-slab{text-align:center;padding:6px 0}
+.dday-slab .dnum{font-family:var(--font-mono);font-weight:600;font-size:56px;line-height:1;
+  color:var(--verdigris-dark);letter-spacing:-.02em;white-space:nowrap}
+.dday-slab .dnum.past{color:var(--oxide)}
+.dday-slab .dlbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--text-on-paper-soft);margin-top:8px}
+.dday-slab .dsub{font-size:11.5px;color:var(--text-on-paper-soft);margin-top:4px}
+@media (max-width:760px){.dday-slab .dnum{font-size:46px}}
+.creed-cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+@media (max-width:760px){.creed-cta{justify-content:center}}
+.btn.qp{background:var(--oxide);color:#fff}
+.btn.qp:hover{background:#8E3A22}
+
+.resume-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  background:var(--brass-tint);color:#5F4720;border:1px solid var(--brass);border-radius:var(--radius-m);
+  padding:14px 18px;margin-bottom:22px}
+.resume-bar .rb-t{font-family:var(--font-display);font-weight:600;font-size:16px}
+.resume-bar .rb-m{font-family:var(--font-mono);font-size:11px;opacity:.85}
+
+/* ---------- analytics: per-type trend ---------- */
+.type-toggles{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.tt{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);font-size:10.5px;
+  border:1px solid var(--paper-line);background:#fff;color:var(--text-on-paper-soft);
+  border-radius:20px;padding:5px 11px;cursor:pointer}
+.tt .sw{width:9px;height:9px;border-radius:50%;background:currentColor;opacity:.3}
+.tt.on{color:var(--text-on-paper);font-weight:600;border-color:var(--stone)}
+.tt.on .sw{opacity:1}
+.tt-actions{display:flex;gap:8px;margin-bottom:12px}
+.locked{opacity:.4}
+.win-lock{font-family:var(--font-mono);font-size:10px;color:var(--stone)}
+
+/* ---------- practice: elimination, pause, notes ---------- */
+.choice-row{display:flex;align-items:center;gap:8px}
+.choice-row .choice{flex:1}
+.elim-btn{flex-shrink:0;width:30px;height:30px;border-radius:50%;border:1px solid var(--paper-line);
+  background:#fff;color:var(--text-on-paper-soft);font-family:var(--font-mono);font-size:11px;
+  font-weight:600;cursor:pointer;display:none;align-items:center;justify-content:center;
+  text-decoration:line-through;line-height:1}
+.choices.elim .elim-btn{display:flex}
+.elim-btn:hover{border-color:var(--oxide);color:var(--oxide)}
+.elim-btn.undo{text-decoration:none;font-size:8.5px;letter-spacing:.02em;color:var(--oxide);border-color:var(--oxide)}
+.choices-head{display:flex;align-items:center;justify-content:flex-end;margin-bottom:9px}
+.elim-toggle{display:inline-flex;align-items:center;gap:7px;background:transparent;cursor:pointer;
+  border:1px solid var(--paper-line);border-radius:var(--radius-s);padding:5px 10px;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:var(--text-on-paper-soft)}
+.elim-toggle .abc{font-weight:600;text-decoration:line-through}
+.elim-toggle.on{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+.icon-btn.warn-on{color:var(--oxide)}
+
+#pauseOverlay{position:fixed;inset:0;z-index:220;background:rgba(20,24,20,.9);
+  display:flex;align-items:center;justify-content:center;padding:24px}
+.pause-card{background:var(--paper);color:var(--text-on-paper);border-radius:var(--radius-m);
+  padding:32px 30px;max-width:400px;width:100%;text-align:center}
+.pause-card h3{font-family:var(--font-display);font-size:22px;margin:0 0 6px}
+.pause-card p{font-size:13px;line-height:1.6;color:var(--text-on-paper-soft);margin:0 0 20px}
+.pause-card .pc-btns{display:flex;gap:10px;flex-direction:column}
+
+.qnote-box{border:1px solid var(--paper-line);background:var(--paper);border-radius:var(--radius-s);
+  padding:12px 14px;margin-top:14px}
+.qnote-box .qn-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
+.qnote-box .qn-lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--oxide)}
+.qnote-box textarea{width:100%;border:1px solid var(--paper-line);border-radius:var(--radius-s);
+  background:#fff;padding:10px 12px;font-family:var(--font-body);font-size:13px;line-height:1.55;
+  color:var(--text-on-paper);resize:vertical;min-height:78px}
+.qnote-read{font-size:13px;line-height:1.6;white-space:pre-wrap}
+.has-note-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--brass);margin-left:5px;vertical-align:middle}
+
+/* ---------- toolbox: word queue + question notes ---------- */
+.wq-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px dashed var(--paper-line);flex-wrap:wrap}
+.wq-item:last-child{border-bottom:none}
+.wq-item .wq-w{font-family:var(--font-display);font-weight:600;font-size:16px}
+.wq-item .wq-src{font-family:var(--font-mono);font-size:10px;color:var(--stone)}
+.wq-item .wq-act{margin-left:auto;display:flex;gap:6px}
+.vocab.pending{border-style:dashed;border-color:var(--brass)}
+.qn-card{background:var(--paper);color:var(--text-on-paper);border:1px solid var(--paper-line);
+  border-radius:var(--radius-m);padding:16px 18px;margin-bottom:12px}
+.qn-card .qc-top{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.qn-card .qc-id{font-family:var(--font-mono);font-size:11.5px;color:var(--text-on-paper-soft)}
+.qn-card .qc-body{font-size:13px;line-height:1.6;white-space:pre-wrap}
+.qn-card .qc-act{display:flex;gap:8px;margin-top:10px}
+
+/* ---------- sets: add by id ---------- */
+.addid{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:14px 0 4px}
+.addid input{border:1px solid var(--paper-line);background:#fff;border-radius:var(--radius-s);
+  padding:9px 12px;font-family:var(--font-mono);font-size:12.5px;color:var(--text-on-paper);min-width:190px}
+.addid .hint{font-family:var(--font-mono);font-size:10.5px;color:var(--text-on-ink-soft)}
+
+/* ---------- admin ---------- */
+.adm-grid{display:grid;grid-template-columns:1fr;gap:18px}
+.badge{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;
+  padding:3px 8px;border-radius:12px;display:inline-block;background:var(--verdigris-tint);color:var(--verdigris-dark)}
+.badge.bad{background:var(--oxide-tint);color:var(--oxide)}
+.badge.idle{background:var(--paper-dim);color:var(--text-on-paper-soft)}
+.act-row{display:flex;gap:6px;flex-wrap:wrap}
+
+/* ---------- guide ---------- */
+.guide-toc{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:30px}
+.guide-toc a{font-family:var(--font-mono);font-size:11px;letter-spacing:.05em;text-decoration:none;
+  border:1px solid #3D4439;border-radius:20px;padding:7px 13px;color:var(--text-on-ink-soft)}
+.guide-toc a:hover{border-color:var(--brass);color:var(--text-on-ink)}
+.gsec{background:var(--paper);color:var(--text-on-paper);border:1px solid var(--paper-line);
+  border-radius:var(--radius-m);padding:24px 26px;margin-bottom:18px;scroll-margin-top:80px}
+.gsec h3{font-family:var(--font-display);font-weight:600;font-size:21px;margin:0 0 4px}
+.gsec .gsub{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--oxide);margin:0 0 14px}
+.gsec p{font-size:13.5px;line-height:1.68;margin:0 0 11px}
+.gsec ul,.gsec ol{font-size:13.5px;line-height:1.68;margin:0 0 11px;padding-left:20px}
+.gsec li{margin-bottom:6px}
+.gsec .how{border-left:3px solid var(--verdigris);background:var(--verdigris-tint);
+  padding:11px 14px;border-radius:0 var(--radius-s) var(--radius-s) 0;margin:0 0 12px}
+.gsec .how b{display:block;font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--verdigris-dark);margin-bottom:4px}
+.gsec .warn-box{border-left:3px solid var(--oxide);background:var(--oxide-tint);
+  padding:11px 14px;border-radius:0 var(--radius-s) var(--radius-s) 0;margin:0 0 12px;font-size:13px;line-height:1.6}
+.gsec kbd{font-family:var(--font-mono);font-size:11px;background:var(--ink);color:var(--paper);
+  padding:2px 6px;border-radius:3px}
+
+/* ---------- sync chip ---------- */
+.sync-chip{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;color:var(--stone);
+  border:1px solid #3D4439;border-radius:20px;padding:5px 10px;white-space:nowrap}
+.sync-chip.ok{color:var(--verdigris);border-color:#3C5548}
+.sync-chip.bad{color:var(--oxide);border-color:#5C3A2E}
+@media (max-width:820px){.sync-chip{display:none}}
+
 </style>
 </head>
 <body>
@@ -396,30 +540,75 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <svg viewBox="0 0 48 48" fill="none"><path d="M10 24c0 9 6.5 15 14 15s14-6 14-15" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><path d="M13 24h22" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><rect x="27" y="5" width="6" height="21" rx="3" transform="rotate(26 30 15)" fill="currentColor"/></svg>
     </div>
     <h1>Mortar &amp; Pestle SAT</h1>
-    <p class="sub">Grind, then measure.</p>
+    <p class="sub" id="gateSub">Grind, then measure.</p>
 
-    <div class="field">
-      <label for="f-name">Name</label>
-      <input id="f-name" type="text" placeholder="DC" autocomplete="given-name">
-    </div>
-    <div class="row2">
+    <!-- STEP 1 · redeem token -->
+    <div class="gate-step active" id="step-token">
       <div class="field">
-        <label for="f-score">Current R&amp;W</label>
-        <input id="f-score" type="number" placeholder="680" min="200" max="800" step="10">
+        <label for="f-name">Name</label>
+        <input id="f-name" type="text" placeholder="Name" autocomplete="given-name">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="f-score">Current R&amp;W</label>
+          <input id="f-score" type="number" placeholder="800" min="200" max="800" step="10">
+        </div>
+        <div class="field">
+          <label for="f-date">Exam date</label>
+          <input id="f-date" type="date">
+        </div>
       </div>
       <div class="field">
-        <label for="f-date">Exam date</label>
-        <input id="f-date" type="date">
+        <label for="f-token">Access token</label>
+        <input id="f-token" class="token" type="text" placeholder="Token" maxlength="14" autocomplete="off">
       </div>
+      <div class="err" id="gateErr"></div>
+      <button class="btn full" id="gateBtn">Redeem token</button>
+      <p class="gate-foot">One token, one browser, once. Your account is what makes it portable.</p>
+      <div class="gate-switch"><button class="link-btn" id="toLogin">I already have an account →</button></div>
     </div>
-    <div class="field">
-      <label for="f-token">Access token</label>
-      <input id="f-token" class="token" type="text" placeholder="MP-XXXX-XXXX" maxlength="14" autocomplete="off">
-    </div>
-    <div class="err" id="gateErr"></div>
 
-    <button class="btn full" id="gateBtn">Unlock this browser</button>
-    <p class="gate-foot">One token, one browser, once.<br>Clear your cache and it's gone.</p>
+    <!-- STEP 2 · create the account -->
+    <div class="gate-step" id="step-signup">
+      <p class="gate-note" id="signupNote"><b>Token accepted.</b> Create an account now — it is what lets you log in from any browser, and it is where your progress is stored.</p>
+      <div class="field">
+        <label for="s-user">User ID</label>
+        <input id="s-user" type="text" placeholder="daniel" maxlength="24" autocomplete="username">
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label for="s-pass">Password</label>
+          <input id="s-pass" type="password" placeholder="••••••" autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label for="s-pass2">Repeat</label>
+          <input id="s-pass2" type="password" placeholder="••••••" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="err" id="signupErr"></div>
+      <button class="btn full" id="signupBtn">Create account</button>
+      <div class="gate-switch"><button class="link-btn" id="backToToken">← Back</button></div>
+    </div>
+
+    <!-- STEP 3 · log in -->
+    <div class="gate-step" id="step-login">
+      <div class="field">
+        <label for="l-user">User ID</label>
+        <input id="l-user" type="text" placeholder="daniel" maxlength="24" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="l-pass">Password</label>
+        <input id="l-pass" type="password" placeholder="••••••" autocomplete="current-password">
+      </div>
+      <div class="err" id="loginErr"></div>
+      <button class="btn full" id="loginBtn">Log in</button>
+      <div class="gate-switch"><button class="link-btn" id="toToken">← Redeem a token instead</button></div>
+    </div>
+
+    <div class="gate-credit">
+      Made by Daniel &nbsp;<a href="tel:+6596687617">+65-9668-7617</a><br>
+      <a href="mailto:chung124911@gapps.uwcsea.edu.sg">chung124911@gapps.uwcsea.edu.sg</a>
+    </div>
   </div>
 </div>
 
@@ -437,8 +626,11 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <button data-page="history">History</button>
       <button data-page="sets">Sets</button>
       <button data-page="toolbox">Toolbox</button>
+      <button data-page="admin" id="tabAdmin" class="hidden">Admin</button>
+      <button data-page="guide">Guide</button>
     </div>
     <div class="topbar-right">
+      <div class="sync-chip" id="syncChip">offline</div>
       <div class="dday-chip" id="ddayChip">—</div>
       <div class="who" id="whoChip" title="Profile settings"></div>
     </div>
@@ -447,13 +639,19 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
   <!-- DASHBOARD -->
   <section id="page-dashboard" class="page active">
     <div class="inner">
+      <div id="resumeSlot"></div>
+
       <div class="creed">
-        <div class="ring" id="ddayRing"></div>
+        <div class="dday-slab" id="ddaySlab"></div>
         <div>
           <p class="hook" id="welcomeLine">Welcome.</p>
           <p class="line" id="creedLine"></p>
           <div class="bank-bar"><i id="bankBar" style="width:0%"></i></div>
           <div class="streak-row" id="creedPills"></div>
+          <div class="creed-cta">
+            <button class="btn small qp" id="btnQuickPractice">▶ Start Quick Practice</button>
+            <span class="pill" style="align-self:center">Untimed · finish whenever you like</span>
+          </div>
         </div>
       </div>
 
@@ -542,8 +740,21 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <h1 class="page-title">The numbers, unsoftened.</h1>
       <p class="page-dek">L10, L20 and L50 are the last 10, 20 and 50 questions; OVR is all-time. Read them together — L10 above OVR means you're improving, below means you're leaking.</p>
       <div class="stat-strip" id="anStats"></div>
-      <h2 class="sec">Accuracy over time</h2>
-      <p class="sec-sub">Rolling L10, one point per session.</p>
+
+      <h2 class="sec">L10 trend · per question type</h2>
+      <p class="sec-sub">Each line is that type's own rolling last-10 accuracy, plotted against how many of that type you've attempted. Toggle types on and off.</p>
+      <div class="card" style="margin-bottom:30px">
+        <div class="tt-actions">
+          <button class="btn tiny ghost" id="ttAll">Show all</button>
+          <button class="btn tiny ghost" id="ttNone">Hide all</button>
+          <button class="btn tiny ghost" id="ttWeak">Weakest five</button>
+        </div>
+        <div class="type-toggles" id="typeToggles"></div>
+        <div id="anTypeTrend"></div>
+      </div>
+
+      <h2 class="sec">Accuracy over time · overall L10</h2>
+      <p class="sec-sub">Rolling L10 across everything, one point per session.</p>
       <div class="card" style="margin-bottom:30px;" id="anChart"></div>
       <h2 class="sec">Per question type</h2>
       <p class="sec-sub">Same four windows, per category, grouped by domain.</p>
@@ -575,6 +786,12 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
         <div><h2 class="sec">Collections</h2><p class="sec-sub" id="setsSub"></p></div>
         <button class="btn small" id="btnNewSet">+ New collection</button>
       </div>
+      <div class="addid">
+        <input id="addIdInput" type="text" placeholder="Question ID e.g. f1bfbed3" autocomplete="off">
+        <select id="addIdColl" style="border:1px solid var(--paper-line);background:#fff;border-radius:4px;padding:9px 11px;font-family:var(--font-body);font-size:12.5px;color:var(--text-on-paper)"></select>
+        <button class="btn small" id="addIdBtn">Add to collection</button>
+        <span class="hint" id="addIdHint">Paste any ID from History, Error logs or a set — it drops straight in.</span>
+      </div>
       <div class="set-grid" id="setGrid"></div>
       <div style="margin-top:26px;" id="setDetail"></div>
     </div>
@@ -589,6 +806,7 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
 
       <div class="tool-tabs" id="toolTabs">
         <button class="active" data-tool="notes">Personal notes</button>
+        <button data-tool="qnotes">Question notes</button>
         <button data-tool="vocab">Vocabs</button>
         <button data-tool="trans">Transition bank</button>
         <button data-tool="errors">Error logs</button>
@@ -607,7 +825,20 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
         </div>
       </div>
 
+      <div id="tool-qnotes" class="tool-panel">
+        <p class="sec-sub">One note per question — strategy, the trap you fell for, the rule you keep forgetting. These follow your account and reappear on the question itself and in every review screen.</p>
+        <div class="compose" style="background:var(--paper);border:1px solid var(--paper-line);border-radius:var(--radius-m);padding:16px;margin-bottom:18px">
+          <input id="qnLookupId" type="text" placeholder="Question ID" style="width:200px;font-family:var(--font-mono)">
+          <button class="btn small" id="qnLookupBtn">Open note</button>
+        </div>
+        <div id="qnoteList"></div>
+      </div>
+
       <div id="tool-vocab" class="tool-panel">
+        <div class="card" style="margin-bottom:16px;border-color:var(--brass)">
+          <div class="card-label">Word queue · logged mid-question, definitions pending</div>
+          <div id="wordQueue"></div>
+        </div>
         <div class="card" style="margin-bottom:16px;">
           <div class="card-label">Add a word</div>
           <div class="compose">
@@ -645,8 +876,217 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
     </div>
   </section>
 
+  <!-- ADMIN -->
+  <section id="page-admin" class="page">
+    <div class="inner">
+      <div class="eyebrow">Administration</div>
+      <h1 class="page-title">Who gets in.</h1>
+      <p class="page-dek">Master key only. Issue tokens, revoke them, unbind a browser, or cut an account off entirely. Revoking takes effect on that person's next request — refresh, sync, login, anything.</p>
+      <div class="act-row" style="margin-bottom:22px">
+        <button class="btn small" id="admRefresh">Refresh</button>
+        <button class="btn small ghost-dark" id="admAddToken">+ Issue token</button>
+      </div>
+      <div class="adm-grid">
+        <div>
+          <h2 class="sec">Tokens</h2>
+          <p class="sec-sub" id="admTokSub">—</p>
+          <div class="tbl-wrap" id="admTokens"></div>
+        </div>
+        <div>
+          <h2 class="sec">Accounts</h2>
+          <p class="sec-sub" id="admAccSub">—</p>
+          <div class="tbl-wrap" id="admAccounts"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GUIDE -->
+  <section id="page-guide" class="page">
+    <div class="inner">
+      <div class="eyebrow">Guide</div>
+      <h1 class="page-title">Every feature, and how to actually use it.</h1>
+      <p class="page-dek">Read this once end to end. Then come back to whichever section you need. Every claim below is about how this specific site behaves — not generic advice.</p>
+
+      <div class="guide-toc">
+        <a href="#g-access">Access &amp; accounts</a>
+        <a href="#g-dash">Dashboard</a>
+        <a href="#g-modes">Practice modes</a>
+        <a href="#g-quick">Quick Practice</a>
+        <a href="#g-pause">Pause &amp; resume</a>
+        <a href="#g-interface">Question interface</a>
+        <a href="#g-elim">Elimination</a>
+        <a href="#g-words">Word logging</a>
+        <a href="#g-qnotes">Per-question notes</a>
+        <a href="#g-sets">Sets</a>
+        <a href="#g-analytics">Analytics</a>
+        <a href="#g-toolbox">Toolbox</a>
+        <a href="#g-history">History</a>
+        <a href="#g-routine">A working routine</a>
+      </div>
+
+      <div class="gsec" id="g-access">
+        <p class="gsub">01 · Access and accounts</p>
+        <h3>One token, one browser, one account — forever</h3>
+        <p>Access is invite-only. A token is a single-use key: the first browser that redeems it is permanently bound to it, and the token will not open on any second browser. That binding lives on the server, not in your cache, so clearing your cache does not free the token up again.</p>
+        <p>What clearing your cache <em>does</em> do is wipe your local copy of everything. That is why creating an account is mandatory. The account is the portable half of the system: user ID and password are stored server-side, so you can log in from a school laptop, a phone, a friend's machine, anywhere, and your entire history comes down with you.</p>
+        <div class="how"><b>How to use it well</b>
+        Log in rather than re-redeeming. If you ever get "this token has already been redeemed on another browser", that is the system working correctly — switch to the login form with the link under the button and use your account instead.</div>
+        <div class="warn-box">If you forget your password there is no self-service reset. Ask the administrator (contact details are on the login screen) to reset it for you.</div>
+      </div>
+
+      <div class="gsec" id="g-dash">
+        <p class="gsub">02 · Dashboard</p>
+        <h3>The one screen that tells you whether to be worried</h3>
+        <ul>
+          <li><b>D-n days.</b> The big number is a plain countdown to your exam date. No ring, no percentage, nothing to interpret — <kbd>D-42</kbd> means forty-two days left. After the date it flips to <kbd>D+n</kbd> in red.</li>
+          <li><b>Bank bar.</b> How much of the question bank you have touched at least once.</li>
+          <li><b>Pills.</b> Attempted count, sessions run, size of the Redemption queue, overall accuracy.</li>
+          <li><b>Where you stand.</b> Three cards: your accuracy windows, an L10 sparkline by session, and your three weakest types by L50 with a one-click button to go grind the worst one.</li>
+          <li><b>Resume bar.</b> If a paused session exists it appears above everything else in brass. It does not expire.</li>
+        </ul>
+        <div class="how"><b>How to use it well</b>
+        Look at one thing: is L10 above or below OVR? Above means the recent work is landing. Below means you are getting worse, or you have moved into harder material — check the per-type table in Analytics before you panic.</div>
+      </div>
+
+      <div class="gsec" id="g-modes">
+        <p class="gsub">03 · Practice modes</p>
+        <h3>Five ways in, each for a different job</h3>
+        <ul>
+          <li><b>Timed.</b> Clock runs, no feedback until the end, pacing logged per question type. Anything over twice the 71-second target is auto-flagged even when you got it right. This is the only mode that produces pace data.</li>
+          <li><b>Untimed.</b> Feedback the instant you submit: correct answer, full rationale, why each distractor fails, and a row of error-reason buttons. This is where actual learning happens.</li>
+          <li><b>Open book.</b> Untimed plus a third panel showing your own Toolbox notes filtered to the current question type. Use it when you know a rule exists but cannot recall it under pressure.</li>
+          <li><b>Mock Test.</b> Two modules, 27 questions each, 32 minutes, question-type ratios matched to the real thing. Drawn from unseen questions only.</li>
+          <li><b>Category / Flagged / Targeted.</b> Narrow slices — one or more of the 13 types, everything you flagged, or your Redemption queue, your collections, and unseen questions of the same type-and-difficulty signature as your misses.</li>
+        </ul>
+        <div class="how"><b>How to use it well</b>
+        Untimed to learn a type, Timed to prove you can do it at speed, Mock to prove you can do it for 32 minutes straight. Doing only Timed teaches you nothing; doing only Untimed leaves you slow.</div>
+      </div>
+
+      <div class="gsec" id="g-quick">
+        <p class="gsub">04 · Quick Practice</p>
+        <h3>The on-the-go mode</h3>
+        <p>Start it from the button inside the white welcome box on the Dashboard. No clock, no configuration, no fixed length — it hands you fresh questions with immediate feedback and keeps going. A red <b>Finish</b> button sits in the footer the whole time.</p>
+        <p>Finish is exclusive to Quick Practice. Every other session type runs until you complete it or exit it normally, precisely so a real session cannot be quietly abandoned halfway and still counted.</p>
+        <div class="how"><b>How to use it well</b>
+        Six questions in a queue, twelve on a bus. Because everything is logged the same way as any other session, five scattered Quick Practices in a day feed the same L10 window as one sit-down set — the analytics do not care where you were.</div>
+      </div>
+
+      <div class="gsec" id="g-pause">
+        <p class="gsub">05 · Pause and resume</p>
+        <h3>Stop anywhere, pick it up anywhere</h3>
+        <p>Every session type — timed, untimed, open book, mock, quick — has a <b>Pause</b> button in the top bar. Pausing freezes the clock, saves the queue, your selections, your strikeouts, your flags and your elapsed time, and syncs the lot to your account.</p>
+        <p>Resume from the brass bar on the Dashboard. Because the paused state lives on the server, you can pause on a laptop and resume on a phone. In Timed mode the clock resumes from exactly where it stopped, so pausing gains you nothing on pace.</p>
+        <div class="warn-box">Only one paused session is held at a time. Starting a fresh session while one is paused will ask you to confirm before discarding it.</div>
+      </div>
+
+      <div class="gsec" id="g-interface">
+        <p class="gsub">06 · The question interface</p>
+        <h3>Top bar, left to right</h3>
+        <ul>
+          <li><b>Exit</b> — leaves the session. Answered questions are already saved; the rest are dropped.</li>
+          <li><b>Pause</b> — see above.</li>
+          <li><b>Flag</b> (<kbd>F</kbd>) — marks the question for the Flagged queue, right or wrong.</li>
+          <li><b>Save</b> (<kbd>S</kbd>) — drops the question into any collection.</li>
+          <li><b>Word</b> (<kbd>W</kbd>) — logs a word you do not know. Select it in the passage first and it prefills.</li>
+          <li><b>Note</b> (<kbd>N</kbd>) — your private note on this exact question. A brass dot on the button means a note already exists.</li>
+          <li><b>Notes</b> — toggles the Open book panel.</li>
+        </ul>
+        <p><b>Keyboard:</b> <kbd>A</kbd>–<kbd>D</kbd> or <kbd>1</kbd>–<kbd>4</kbd> to select, <kbd>Alt</kbd>+letter to strike out, <kbd>Enter</kbd> to submit then advance, <kbd>Esc</kbd> to exit.</p>
+      </div>
+
+      <div class="gsec" id="g-elim">
+        <p class="gsub">07 · Answer elimination</p>
+        <h3>The same crossing-out tool as the real Bluebook app</h3>
+        <p>Hit the <b>ABC</b> toggle above the choices. Each option grows a circular strike button on its right; click it to cross the option out, and the button becomes <b>Undo</b>. Crossed options stay struck when you navigate away and come back, and they are cleared for you on a new question. <kbd>Alt</kbd> + the letter does the same thing without touching the toggle.</p>
+        <div class="how"><b>How to use it well</b>
+        On Transitions and Rhetorical synthesis, cross out before you re-read the passage — it forces you to commit to a reason for rejecting each option instead of drifting toward whichever one feels nice. If you cannot articulate why an option is dead, do not cross it out.</div>
+      </div>
+
+      <div class="gsec" id="g-words">
+        <p class="gsub">08 · Word logging</p>
+        <h3>Capture now, define later</h3>
+        <p>Mid-question, highlight the word you did not know and press <b>Word</b> in the top right (or <kbd>W</kbd>). It is logged instantly with the question ID attached and you carry on — no interruption, no definition required in the moment.</p>
+        <p>Every logged word lands in the brass <b>Word queue</b> at the top of Toolbox → Vocabs. Click <b>Define</b> on any of them to fill in the part of speech, the common definition, the sense the test actually used, and your own note. Once defined it joins the main vocab grid.</p>
+        <div class="how"><b>How to use it well</b>
+        Empty the queue once a day, not once a week. Write the <em>tested</em> sense in the second field — Words-in-Context questions almost never turn on the dictionary-first meaning, and that second field is the one worth re-reading.</div>
+      </div>
+
+      <div class="gsec" id="g-qnotes">
+        <p class="gsub">09 · Per-question notes</p>
+        <h3>Your own annotation on every single question</h3>
+        <p>Press <b>Note</b> during practice, or open any question from History, the Error log, or a set and use the note box in the detail view. Write whatever helps: the trap, the grammar rule, why you fell for C, the pattern this question shares with three others.</p>
+        <p>Notes are stored per question ID against your account, so they follow you across browsers and reappear the moment you meet that question again — including inside the feedback drawer when you get it wrong. Toolbox → Question notes lists every one, and lets you jump straight to a question by ID.</p>
+        <div class="how"><b>How to use it well</b>
+        Write the note in the form of the decision you should have made, not a description of the mistake. "Missed it, careless" is worthless. "Two independent clauses — semicolon or period, never a comma, even when the second one is short" is a rule you can apply next Tuesday.</div>
+      </div>
+
+      <div class="gsec" id="g-sets">
+        <p class="gsub">10 · Sets and collections</p>
+        <h3>Curated queues you build yourself</h3>
+        <p><b>Redemption</b> is built in and fills itself with every question you last got wrong. Beyond that you make your own — press Save mid-question, or use <b>+ New collection</b>.</p>
+        <p>You can also add questions <b>after the fact</b>: the add-by-ID row at the top of the Sets page takes any question ID, from anywhere — a session you finished last week, the error log, a set you were reviewing — picks the target collection, and drops it in. It behaves identically to a question saved live: it shows up in the collection, counts toward the collection's progress bar, and is drawn on when you practise it.</p>
+        <p>Each collection shows how many of its questions you have attempted and your accuracy on them. <b>Practice</b> runs the whole collection; <b>View</b> opens the table, where every row has a note button and a remove button.</p>
+        <div class="how"><b>How to use it well</b>
+        Keep collections narrow and disposable. "Comma splices I fell for" beats "Grammar". When a narrow collection hits 90%, delete it — that is the point of it.</div>
+      </div>
+
+      <div class="gsec" id="g-analytics">
+        <p class="gsub">11 · Analytics</p>
+        <h3>What the windows literally mean</h3>
+        <ul>
+          <li><b>L10</b> is the last 10 questions you attempted. Not the last session, not the last ten of some category — the ten most recent attempts, full stop. Attempt an eleventh and the oldest one drops out of the window and the newest enters it. The frame shifts forward one question at a time.</li>
+          <li><b>L20, L40 and L50</b> work identically but stay locked until you have actually attempted 20, 40 and 50 questions. A greyed-out window means not enough data, not 0%.</li>
+          <li><b>OVR</b> is every attempt you have ever made.</li>
+        </ul>
+        <p>Above the overall chart sits the <b>per-type L10 trend</b>: one line per question type, each showing that type's own rolling last-10 accuracy plotted against how many of that type you have done. Toggle types on and off with the chips — "Weakest five" is usually the only view you need.</p>
+        <p>Below: the per-type table with all four windows and an L10-vs-OVR arrow, your seconds-per-question by type from Timed mode against the 71-second target, and the auto-flagged over-pace list.</p>
+        <div class="how"><b>How to use it well</b>
+        Read L10 against OVR, never on its own — ten questions is a small enough window that one bad passage moves it 20 points. The per-type trend lines are where real improvement shows up: a line that climbs and then flattens above 80% is a type you can stop drilling.</div>
+        <div class="warn-box">Slow and correct is still a leak. The pace panel flags anything over 2× target regardless of outcome, because on the real test that time was borrowed from a later question.</div>
+      </div>
+
+      <div class="gsec" id="g-toolbox">
+        <p class="gsub">12 · Toolbox</p>
+        <h3>Five drawers</h3>
+        <ul>
+          <li><b>Personal notes</b> — rules and heuristics tagged General or by question type. Open book mode reads from here.</li>
+          <li><b>Question notes</b> — your per-question annotations, all in one list.</li>
+          <li><b>Vocabs</b> — the pending word queue on top, your defined words below.</li>
+          <li><b>Transition bank</b> — reserved for your own list, grouped by relationship.</li>
+          <li><b>Error logs / Flagged logs</b> — every question you have ever missed, and everything you flagged. Nothing rolls off either one.</li>
+        </ul>
+        <div class="how"><b>How to use it well</b>
+        Tag notes by type rather than General wherever you can. A General note shows up on every question in Open book; a type-tagged one shows up exactly when it is relevant, which is what makes the panel readable instead of a wall.</div>
+      </div>
+
+      <div class="gsec" id="g-history">
+        <p class="gsub">13 · History</p>
+        <h3>Everything, question by question</h3>
+        <p>Every session you have attempted, newest first. Open one and you get a row per question: ID, type, difficulty, your pick, the correct answer, time taken, the error reason you tagged, and whether you flagged it. <b>View</b> opens the full question with passage, choices, explanation, and your note.</p>
+        <div class="how"><b>How to use it well</b>
+        Same-day review is worth roughly double next-week review. Open the session you just finished, view every question you missed, and write the note while you can still remember what you were thinking when you picked the wrong one.</div>
+      </div>
+
+      <div class="gsec" id="g-routine">
+        <p class="gsub">14 · Putting it together</p>
+        <h3>A routine that uses all of this</h3>
+        <ol>
+          <li><b>Daily, 15 minutes.</b> Quick Practice on the go. Log words as you meet them, flag anything that felt shaky, Finish whenever you run out of time.</li>
+          <li><b>Daily, 10 minutes.</b> Empty the word queue in Toolbox → Vocabs. Write per-question notes on everything you missed today, straight from History.</li>
+          <li><b>Three times a week.</b> Open Analytics, look at the per-type trend, pick the weakest type, run 20 questions of it Untimed. Build a narrow collection from what you miss.</li>
+          <li><b>Twice a week.</b> Timed set of 22 to keep pace honest. Check the seconds-per-type panel afterwards, not just the score.</li>
+          <li><b>Weekly.</b> Grind Redemption. A question you get right on the second pass leaves the queue; one you miss again is the real problem and deserves a note.</li>
+          <li><b>Every two weeks.</b> Full Mock Test, both modules, no pausing. This is the only thing that tests stamina.</li>
+        </ol>
+        <div class="how"><b>The single highest-leverage habit</b>
+        Write the per-question note the same day you miss the question. Everything else on this site is measurement; that note is the only part that changes what you will do next time.</div>
+      </div>
+    </div>
+  </section>
+
   <footer class="foot">
-    Mortar &amp; Pestle SAT · <span id="bankStatus">—</span> · <button id="btnExport">Export data</button> · <button id="btnWipe">Reset</button>
+    Mortar &amp; Pestle SAT · <span id="bankStatus">—</span> · <button id="btnExport">Export data</button> · <button id="btnSyncNow">Sync now</button> · <button id="btnLogout">Log out</button> · <button id="btnWipe">Reset</button>
   </footer>
 </div>
 
@@ -657,11 +1097,20 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <button class="icon-btn" id="pExit">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>Exit
       </button>
+      <button class="icon-btn" id="pauseBtn" title="Pause and save this session">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v16M15 4v16"/></svg>Pause
+      </button>
       <span class="mode-badge" id="modeBadge">Timed</span>
       <span id="qCounter">—</span>
       <span id="qLabel" style="color:var(--text-on-ink-soft)"></span>
     </div>
     <div class="right">
+      <button class="icon-btn" id="wordBtn" title="Log a word you don't know (W)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7V5h16v2"/><path d="M9 19h6"/><path d="M12 5v14"/></svg>Word
+      </button>
+      <button class="icon-btn" id="qnoteBtn" title="Your note on this question (N)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>Note<span id="qnoteDot"></span>
+      </button>
       <button class="icon-btn" id="flagBtn">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><path d="M4 22v-7"/></svg>Flag
       </button>
@@ -683,8 +1132,13 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <div class="stem" id="qStem"></div>
     </div>
     <div class="pane">
+      <div class="choices-head">
+        <button class="elim-toggle" id="elimToggle" title="Turn answer elimination on or off">
+          <span class="abc">ABC</span> Eliminate
+        </button>
+      </div>
       <div class="choices" id="qChoices"></div>
-      <div class="kbd-hint">A–D or 1–4 to select · Alt + letter to strike out · Enter to submit / next · F flag · S save</div>
+      <div class="kbd-hint">A–D or 1–4 to select · Alt + letter to strike out · Enter to submit / next · F flag · S save · W log word · N note</div>
     </div>
     <div id="openbook" class="hidden">
       <h3>Your notes</h3>
@@ -707,13 +1161,33 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <button class="fr" data-fr="Time pressure">Time pressure</button>
       <button class="fr" data-fr="Vocabulary">Vocabulary</button>
     </div>
+    <div class="qnote-box" id="drawerNote">
+      <div class="qn-head">
+        <span class="qn-lbl">Your note on this question</span>
+        <button class="btn tiny ghost" id="drawerNoteSave">Save note</button>
+      </div>
+      <textarea id="drawerNoteText" placeholder="Why you missed it, the trap, the rule to remember next time…"></textarea>
+    </div>
   </div>
 
   <div class="q-foot">
     <span class="fl" id="sessMeta"></span>
     <div style="display:flex;gap:10px">
+      <button class="btn ghost small hidden" id="pFinish">Finish</button>
       <button class="btn ghost small" id="pPrev">Back</button>
       <button class="btn small" id="pMain">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAUSE ============ -->
+<div id="pauseOverlay" class="hidden">
+  <div class="pause-card">
+    <h3>Session paused</h3>
+    <p id="pauseMeta">Saved to your account. Pick it up on any browser.</p>
+    <div class="pc-btns">
+      <button class="btn" id="pauseResume">Resume now</button>
+      <button class="btn ghost" id="pauseLeave">Leave it for later</button>
     </div>
   </div>
 </div>
@@ -813,8 +1287,12 @@ var DB = {
   sessions: [],
   collections: [],
   notes: [],
-  vocab: []
+  vocab: [],
+  qnotes: {},        // qid -> {text, ts}  · your own annotation per question
+  paused: null       // serialised in-flight session, resumable anywhere
 };
+
+var SYNC_KEYS = ['profile', 'attempts', 'sessions', 'collections', 'notes', 'vocab', 'qnotes', 'paused'];
 
 function loadDB() {
   DB.profile     = Store.get('profile', null);
@@ -823,13 +1301,144 @@ function loadDB() {
   DB.collections = Store.get('collections', null) || seedCollections();
   DB.notes       = Store.get('notes', []);
   DB.vocab       = Store.get('vocab', []);
+  DB.qnotes      = Store.get('qnotes', {}) || {};
+  DB.paused      = Store.get('paused', null);
 }
 function seedCollections() {
   var c = [{ id: 'redemption', name: 'Redemption', builtin: true, qids: [], createdAt: Date.now() }];
   Store.set('collections', c);
   return c;
 }
-function save(k) { Store.set(k, DB[k]); }
+function save(k) { Store.set(k, DB[k]); scheduleSync(); }
+function saveLocalOnly(k) { Store.set(k, DB[k]); }
+
+/* ============================================================
+   CLOUD — one endpoint, one function, no Pro features
+   ============================================================ */
+var API_URL = '/api/store';
+var AUTH = { sid: null, account: null };
+var SYNC = { state: 'offline', dirty: false, timer: null, inflight: false, lastErr: '' };
+
+function deviceId() {
+  var d = Store.get('deviceId', null);
+  if (!d) { d = uid('dev') + Math.random().toString(36).slice(2, 10); Store.set('deviceId', d); }
+  return d;
+}
+
+function api(action, payload) {
+  var body = payload || {};
+  body.action = action;
+  return fetch(API_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    cache: 'no-store',
+    body: JSON.stringify(body)
+  }).then(function (r) {
+    return r.json().catch(function () { return { ok: false, error: 'Server returned an unreadable response.' }; });
+  }).catch(function () {
+    return { ok: false, error: 'Cannot reach the server. Check your connection.', offline: true };
+  });
+}
+
+function snapshot() {
+  var s = {};
+  SYNC_KEYS.forEach(function (k) { s[k] = DB[k]; });
+  return s;
+}
+
+/* union-merge: nothing is ever dropped, whichever side it came from */
+function mergeById(local, remote, idKey) {
+  var out = [], seen = {};
+  (remote || []).concat(local || []).forEach(function (r) {
+    if (!r) return;
+    var k = r[idKey];
+    if (k == null) { out.push(r); return; }
+    if (seen[k]) return;
+    seen[k] = 1; out.push(r);
+  });
+  return out;
+}
+function applySnapshot(remote, mode) {
+  remote = remote || {};
+  if (mode === 'merge') {
+    DB.attempts    = mergeById(DB.attempts, remote.attempts, 'id');
+    DB.sessions    = mergeById(DB.sessions, remote.sessions, 'id');
+    DB.notes       = mergeById(DB.notes, remote.notes, 'id');
+    DB.vocab       = mergeById(DB.vocab, remote.vocab, 'id');
+
+    var colls = {};
+    (remote.collections || []).concat(DB.collections || []).forEach(function (c) {
+      if (!c || !c.id) return;
+      if (!colls[c.id]) { colls[c.id] = { id: c.id, name: c.name, builtin: !!c.builtin, qids: [], createdAt: c.createdAt || Date.now() }; }
+      (c.qids || []).forEach(function (q) { if (colls[c.id].qids.indexOf(q) === -1) colls[c.id].qids.push(q); });
+    });
+    DB.collections = Object.keys(colls).map(function (k) { return colls[k]; });
+
+    var qn = {};
+    Object.keys(remote.qnotes || {}).forEach(function (k) { qn[k] = remote.qnotes[k]; });
+    Object.keys(DB.qnotes || {}).forEach(function (k) {
+      if (!qn[k] || (DB.qnotes[k].ts || 0) > (qn[k].ts || 0)) qn[k] = DB.qnotes[k];
+    });
+    DB.qnotes = qn;
+
+    if (!DB.paused && remote.paused) DB.paused = remote.paused;
+    if (remote.profile) DB.profile = Object.assign({}, remote.profile, DB.profile || {});
+  } else {
+    SYNC_KEYS.forEach(function (k) { if (remote[k] !== undefined) DB[k] = remote[k]; });
+    if (!DB.collections || !DB.collections.length) DB.collections = seedCollections();
+    if (!DB.qnotes) DB.qnotes = {};
+  }
+  // attempts drive every rolling window — keep them in true chronological order
+  DB.attempts.sort(function (a, b) { return (a.ts || 0) - (b.ts || 0); });
+  SYNC_KEYS.forEach(function (k) { Store.set(k, DB[k]); });
+}
+
+function setSync(state, msg) {
+  SYNC.state = state;
+  var c = $('syncChip');
+  if (!c) return;
+  c.className = 'sync-chip' + (state === 'saved' ? ' ok' : (state === 'error' ? ' bad' : ''));
+  c.textContent = msg || ({ saved: 'synced', saving: 'syncing…', dirty: 'unsaved', error: 'sync failed', offline: 'local only' })[state];
+  c.title = SYNC.lastErr || '';
+}
+
+function scheduleSync() {
+  if (!AUTH.sid) { setSync('offline', 'local only'); return; }
+  SYNC.dirty = true;
+  setSync('dirty');
+  clearTimeout(SYNC.timer);
+  SYNC.timer = setTimeout(pushNow, 1500);
+}
+
+function pushNow(cb) {
+  if (!AUTH.sid) { if (cb) cb(false); return; }
+  if (SYNC.inflight) { clearTimeout(SYNC.timer); SYNC.timer = setTimeout(function () { pushNow(cb); }, 800); return; }
+  SYNC.inflight = true;
+  setSync('saving');
+  api('push', { sid: AUTH.sid, data: snapshot() }).then(function (r) {
+    SYNC.inflight = false;
+    if (r.ok) {
+      SYNC.dirty = false; SYNC.lastErr = '';
+      setSync('saved');
+    } else {
+      SYNC.lastErr = r.error || 'unknown';
+      setSync('error');
+      if (/revoked|expired|no longer exists/i.test(r.error || '')) hardLogout(r.error);
+    }
+    if (cb) cb(!!r.ok);
+  });
+}
+
+/* flush before the tab goes away */
+window.addEventListener('beforeunload', function () {
+  if (AUTH.sid && SYNC.dirty && navigator.sendBeacon) {
+    var body = JSON.stringify({ action: 'push', sid: AUTH.sid, data: snapshot() });
+    try { navigator.sendBeacon(API_URL, new Blob([body], { type: 'application/json' })); } catch (e) {}
+  }
+});
+document.addEventListener('visibilitychange', function () {
+  if (document.visibilityState === 'hidden' && SYNC.dirty) pushNow();
+});
 
 /* ============================================================
    BANK
@@ -925,7 +1534,15 @@ function loadBank() {
 function attemptsFor(type) {
   return type ? DB.attempts.filter(function (a) { return a.type === type; }) : DB.attempts.slice();
 }
-function windowAcc(arr, n) {
+/* The window is a literal trailing frame over the attempt log: the last
+   n questions attempted, shifting forward one question at a time. */
+var WINDOW_KEYS = ['L10', 'L20', 'L40', 'L50', 'OVR'];
+var WINDOW_MIN  = { L10: 1, L20: 20, L40: 40, L50: 50, OVR: 1 };
+
+function windowAcc(arr, n, minRequired) {
+  if (!arr.length) return null;
+  // L20/L40/L50 only unlock once that many questions have actually been attempted
+  if (minRequired && arr.length < minRequired) return null;
   var w = n ? arr.slice(-n) : arr;
   if (!w.length) return null;
   var c = w.filter(function (a) { return a.correct; }).length;
@@ -933,7 +1550,23 @@ function windowAcc(arr, n) {
 }
 function windows(type) {
   var a = attemptsFor(type);
-  return { L10: windowAcc(a, 10), L20: windowAcc(a, 20), L50: windowAcc(a, 50), OVR: windowAcc(a, 0) };
+  return {
+    L10: windowAcc(a, 10, 1),
+    L20: windowAcc(a, 20, 20),
+    L40: windowAcc(a, 40, 40),
+    L50: windowAcc(a, 50, 50),
+    OVR: windowAcc(a, 0, 1)
+  };
+}
+/* rolling last-10 accuracy after each attempt of a given type */
+function rollingL10(type) {
+  var a = attemptsFor(type), out = [];
+  for (var i = 0; i < a.length; i++) {
+    var w = a.slice(Math.max(0, i - 9), i + 1);
+    var c = w.filter(function (x) { return x.correct; }).length;
+    out.push({ i: i + 1, pct: Math.round((c / w.length) * 100), n: w.length });
+  }
+  return out;
 }
 function seenCount() {
   var s = {};
@@ -1010,13 +1643,25 @@ function closeModal() { $('modal').classList.add('hidden'); $('modalBody').inner
 $('modal').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
 
 /* ============================================================
-   GATE
+   GATE — token redemption, account creation, login
+   Every rule here is enforced server-side; the client only asks.
    ============================================================ */
-// Replace with your own list. Each entry authorises one browser.
-var TOKENS = [
-  'MA00DC9', 'GU1DKFGH', 'GU2CNWOA', 'GU3UPNME', 'GU4SPTGUE',
-  'GU5SPTGUE', 'GU6DVRGKR', 'GU7EHQJST', 'GU8EHQJST', 'GU9EHQJST'
-];
+var PENDING = null;   // {token, name, baseline, examDate, migrating}
+
+function gateStep(step) {
+  ['token', 'signup', 'login'].forEach(function (s) {
+    $('step-' + s).classList.toggle('active', s === step);
+  });
+  $('gateSub').textContent = step === 'login'
+    ? 'Log in from any browser.'
+    : step === 'signup' ? 'One more step, and it follows you everywhere.' : 'Grind, then measure.';
+}
+function busy(btn, on, label) {
+  btn.disabled = !!on;
+  btn.classList.toggle('busy', !!on);
+  if (on) { btn.dataset.old = btn.textContent; btn.textContent = label || 'Working…'; }
+  else if (btn.dataset.old) { btn.textContent = btn.dataset.old; }
+}
 
 function openApp() {
   $('gate').classList.add('hidden');
@@ -1028,7 +1673,10 @@ function paintChrome() {
   var p = DB.profile || {};
   $('whoChip').textContent = (p.name || '—') + (p.baseline ? ' · ' + p.baseline : '');
   var d = daysOut();
-  $('ddayChip').textContent = d == null ? 'no date set' : (d >= 0 ? 'T−' + d : 'test passed');
+  $('ddayChip').textContent = d == null ? 'no date set' : (d >= 0 ? 'D-' + d : 'test passed');
+  var master = !!(AUTH.account && AUTH.account.isMaster);
+  $('tabAdmin').classList.toggle('hidden', !master);
+  setSync(AUTH.sid ? (SYNC.dirty ? 'dirty' : SYNC.state === 'error' ? 'error' : 'saved') : 'offline');
 }
 function daysOut() {
   var p = DB.profile;
@@ -1037,42 +1685,169 @@ function daysOut() {
   var now = new Date(); now.setHours(0, 0, 0, 0);
   return Math.round((t - now) / 86400000);
 }
+
+function adoptAccount(r, mergeMode) {
+  AUTH.sid = r.sid || AUTH.sid;
+  AUTH.account = r.account;
+  Store.set('sid', AUTH.sid);
+  applySnapshot(r.data, mergeMode || 'replace');
+  DB.profile = Object.assign({}, DB.profile || {}, {
+    name: r.account.name, baseline: r.account.baseline, examDate: r.account.examDate,
+    token: r.account.token, username: r.account.username, accountId: r.account.id
+  });
+  saveLocalOnly('profile');
+  setSync('saved');
+}
+
+function hardLogout(msg) {
+  AUTH.sid = null; AUTH.account = null;
+  Store.set('sid', null);
+  if (msg) toast(msg);
+  $('app').classList.add('hidden');
+  $('practice').classList.add('hidden');
+  $('summary').classList.add('hidden');
+  $('gate').classList.remove('hidden');
+  gateStep('login');
+  $('loginErr').textContent = msg || '';
+}
+
+/* ---- step switching ---- */
+$('toLogin').addEventListener('click', function () { gateStep('login'); });
+$('toToken').addEventListener('click', function () { gateStep('token'); });
+$('backToToken').addEventListener('click', function () { gateStep('token'); });
+
+/* ---- step 1: redeem ---- */
 $('gateBtn').addEventListener('click', function () {
+  var btn = this;
   var name = $('f-name').value.trim();
   var score = parseInt($('f-score').value, 10);
   var date = $('f-date').value;
   var token = $('f-token').value.trim().toUpperCase();
   var err = $('gateErr');
+  err.textContent = '';
   if (!name) { err.textContent = 'Name is required.'; return; }
   if (!date) { err.textContent = 'Exam date is required — the counter needs it.'; return; }
-  if (TOKENS.indexOf(token) === -1) { err.textContent = 'Token not recognised.'; return; }
-  var used = Store.get('usedTokens', []);
-  if (used.indexOf(token) > -1) { err.textContent = 'This token was already redeemed on this browser.'; return; }
-  used.push(token); Store.set('usedTokens', used);
-  DB.profile = {
-    name: name, baseline: isNaN(score) ? null : score, examDate: date,
-    token: token, deviceId: uid('dev'), createdAt: Date.now()
-  };
-  save('profile');
-  openApp();
+  if (!token) { err.textContent = 'Enter your access token.'; return; }
+
+  busy(btn, true, 'Checking…');
+  api('redeem', { token: token, deviceId: deviceId() }).then(function (r) {
+    busy(btn, false);
+    if (!r.ok) {
+      // token is spent, but this person already has an account — send them there
+      if (r.hasAccount) {
+        gateStep('login');
+        $('l-user').value = r.username || '';
+        $('loginErr').textContent = r.error || 'Log in with your account instead.';
+        return;
+      }
+      err.textContent = r.error || 'Token rejected.';
+      return;
+    }
+    if (r.hasAccount) {
+      gateStep('login');
+      $('l-user').value = r.username || '';
+      $('loginErr').textContent = 'This token already has an account. Log in with it.';
+      return;
+    }
+    PENDING = { token: r.token, name: name, baseline: isNaN(score) ? null : score, examDate: date, migrating: false };
+    gateStep('signup');
+    $('s-user').focus();
+  });
 });
+
+/* ---- step 2: signup ---- */
+$('signupBtn').addEventListener('click', function () {
+  var btn = this;
+  var err = $('signupErr');
+  err.textContent = '';
+  if (!PENDING) { err.textContent = 'Start again from the token step.'; gateStep('token'); return; }
+  var user = $('s-user').value.trim().toLowerCase();
+  var p1 = $('s-pass').value, p2 = $('s-pass2').value;
+  if (!/^[a-z0-9._-]{3,24}$/.test(user)) { err.textContent = 'User ID: 3–24 characters, letters/numbers/. _ - only.'; return; }
+  if (p1.length < 6) { err.textContent = 'Password must be at least 6 characters.'; return; }
+  if (p1 !== p2) { err.textContent = 'The two passwords do not match.'; return; }
+
+  busy(btn, true, 'Creating…');
+  api('signup', {
+    token: PENDING.token, deviceId: deviceId(), username: user, password: p1,
+    name: PENDING.name, baseline: PENDING.baseline, examDate: PENDING.examDate,
+    snapshot: PENDING.migrating ? snapshot() : {
+      profile: { name: PENDING.name, baseline: PENDING.baseline, examDate: PENDING.examDate, token: PENDING.token, createdAt: Date.now() },
+      attempts: [], sessions: [], collections: DB.collections, notes: [], vocab: [], qnotes: {}, paused: null
+    }
+  }).then(function (r) {
+    busy(btn, false);
+    if (!r.ok) { err.textContent = r.error || 'Could not create the account.'; return; }
+    adoptAccount(r, PENDING.migrating ? 'merge' : 'replace');
+    var wasMigrating = PENDING.migrating;
+    PENDING = null;
+    openApp();
+    if (wasMigrating) { pushNow(); toast('Progress uploaded — it now follows your account.'); }
+    else toast('Account created.');
+  });
+});
+
+/* ---- step 3: login ---- */
+$('loginBtn').addEventListener('click', function () {
+  var btn = this;
+  var err = $('loginErr');
+  err.textContent = '';
+  var user = $('l-user').value.trim().toLowerCase();
+  var pass = $('l-pass').value;
+  if (!user || !pass) { err.textContent = 'User ID and password, please.'; return; }
+  busy(btn, true, 'Logging in…');
+  api('login', { username: user, password: pass }).then(function (r) {
+    busy(btn, false);
+    if (!r.ok) { err.textContent = r.error || 'Login failed.'; return; }
+    var hadLocal = (DB.attempts && DB.attempts.length) || (DB.sessions && DB.sessions.length);
+    adoptAccount(r, hadLocal ? 'merge' : 'replace');
+    openApp();
+    if (hadLocal) { pushNow(); toast('Local and cloud progress merged.'); }
+  });
+});
+['f-token', 's-pass2', 'l-pass'].forEach(function (id) {
+  $(id).addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    $({ 'f-token': 'gateBtn', 's-pass2': 'signupBtn', 'l-pass': 'loginBtn' }[id]).click();
+  });
+});
+
+/* ---- profile ---- */
 $('whoChip').addEventListener('click', function () {
   var p = DB.profile || {};
+  var a = AUTH.account || {};
   modal(
-    '<h3>Profile</h3><p class="sh-sub">Stored in this browser only.</p>' +
+    '<h3>Profile</h3><p class="sh-sub">Signed in as <b>' + esc(a.username || '—') + '</b> · token ' + esc(a.token || '—') + '</p>' +
     '<div class="field"><label>Name</label><input id="pfName" value="' + esc(p.name || '') + '"></div>' +
     '<div class="row2"><div class="field"><label>Current R&amp;W</label><input id="pfScore" type="number" value="' + (p.baseline || '') + '"></div>' +
     '<div class="field"><label>Exam date</label><input id="pfDate" type="date" value="' + esc(p.examDate || '') + '"></div></div>' +
+    '<div class="card-label" style="margin-top:14px">Change password · leave blank to keep it</div>' +
+    '<div class="row2"><div class="field"><label>Current</label><input id="pfOld" type="password" autocomplete="current-password"></div>' +
+    '<div class="field"><label>New</label><input id="pfNew" type="password" autocomplete="new-password"></div></div>' +
+    '<div class="err" id="pfErr"></div>' +
     '<div style="display:flex;gap:10px;margin-top:8px"><button class="btn ghost small" style="flex:1" data-x="c">Cancel</button>' +
     '<button class="btn small" style="flex:2" data-x="s">Save</button></div>',
     function (m) {
       m.querySelector('[data-x=c]').onclick = closeModal;
       m.querySelector('[data-x=s]').onclick = function () {
-        DB.profile.name = $('pfName').value.trim() || DB.profile.name;
-        var s = parseInt($('pfScore').value, 10);
-        DB.profile.baseline = isNaN(s) ? null : s;
-        DB.profile.examDate = $('pfDate').value || DB.profile.examDate;
-        save('profile'); closeModal(); paintChrome(); RENDER.dashboard();
+        var name = $('pfName').value.trim() || DB.profile.name;
+        var sc = parseInt($('pfScore').value, 10);
+        var dt = $('pfDate').value || DB.profile.examDate;
+        var np = $('pfNew').value, op = $('pfOld').value;
+        DB.profile.name = name;
+        DB.profile.baseline = isNaN(sc) ? null : sc;
+        DB.profile.examDate = dt;
+        save('profile'); paintChrome(); RENDER.dashboard();
+        if (!AUTH.sid) { closeModal(); return; }
+        api('profile', {
+          sid: AUTH.sid, name: name, baseline: DB.profile.baseline, examDate: dt,
+          oldPassword: op, newPassword: np || undefined
+        }).then(function (r) {
+          if (!r.ok) { $('pfErr').textContent = r.error || 'Could not save.'; return; }
+          AUTH.account = r.account;
+          closeModal(); toast('Profile saved');
+        });
       };
     }
   );
@@ -1106,27 +1881,29 @@ RENDER.dashboard = function () {
   if (w.OVR) pills.push('<span class="pill">Overall <b>' + w.OVR.pct + '%</b></span>');
   $('creedPills').innerHTML = pills.join('');
 
-  // D-day ring
+  // D-day — plain countdown, no ring
   var d = daysOut();
-  var horizon = 120;
-  var frac = d == null ? 0 : Math.max(0, Math.min(1, 1 - (d / horizon)));
-  var C = 327;
-  $('ddayRing').innerHTML =
-    '<svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#D8CCA9" stroke-width="9"/>' +
-    '<circle cx="60" cy="60" r="52" fill="none" stroke="#335745" stroke-width="9" stroke-linecap="round" ' +
-    'stroke-dasharray="' + C + '" stroke-dashoffset="' + (C - C * frac) + '"/></svg>' +
-    '<div class="center"><div class="dnum">' + (d == null ? '—' : Math.abs(d)) + '</div>' +
-    '<div class="dlbl">' + (d == null ? 'set a date' : d >= 0 ? 'days out' : 'days past') + '</div></div>';
+  $('ddaySlab').innerHTML = d == null
+    ? '<div class="dnum">D-?</div><div class="dlbl">set a date</div><div class="dsub">Profile, top right</div>'
+    : '<div class="dnum' + (d < 0 ? ' past' : '') + '">D' + (d >= 0 ? '-' + d : '+' + Math.abs(d)) + '</div>' +
+      '<div class="dlbl">days</div>' +
+      '<div class="dsub">' + (d >= 0 ? 'until ' : 'since ') + esc(p.examDate || '') + '</div>';
+
+  // paused session
+  paintResumeBar();
 
   $('cntFlagged').textContent = flaggedIds().length;
   $('cntRedemption').textContent = missedIds().length;
 
   // windows
-  $('briefWindows').innerHTML = ['L10', 'L20', 'L50', 'OVR'].map(function (k) {
+  $('briefWindows').innerHTML = WINDOW_KEYS.map(function (k) {
     var v = w[k];
+    var need = WINDOW_MIN[k] || 0;
+    var locked = !v && need && DB.attempts.length < need;
     var cls = (v && w.OVR && k !== 'OVR') ? (v.pct >= w.OVR.pct ? 'up' : 'down') : '';
-    return '<div class="lrow"><span class="tag">' + k + '</span><span class="val ' + cls + '">' +
-      (v ? v.pct + '%' : '—') + '<small>' + (v ? v.correct + '/' + v.n : 'no data') + '</small></span></div>';
+    return '<div class="lrow' + (locked ? ' locked' : '') + '"><span class="tag">' + k + '</span><span class="val ' + cls + '">' +
+      (v ? v.pct + '%' : '—') + '<small>' + (v ? v.correct + '/' + v.n :
+      (locked ? 'needs ' + need : 'no data')) + '</small></span></div>';
   }).join('');
 
   // sparkline
@@ -1363,8 +2140,17 @@ function wireModeFooter(m, cb) {
 var SESSION_LEN = DEFAULT_LEN;
 var S = null;   // live session state
 
+var MODE_LABEL = { timed: 'Timed', untimed: 'Untimed', openbook: 'Open book', quick: 'Quick Practice' };
+/* quick shares untimed's feedback behaviour everywhere */
+function immediateFeedback() { return S && S.mode !== 'timed'; }
+
 function startSession(opts) {
   if (!BANK.length) { toast('No questions loaded'); return; }
+  if (DB.paused && !opts.__discardedPause) {
+    if (!confirm('You have a paused "' + DB.paused.label + '" session. Starting a new one will discard it. Continue?')) return;
+    DB.paused = null; save('paused');
+    opts.__discardedPause = true;
+  }
   var pool;
   if (opts.ids) {
     pool = opts.ids.map(function (id) { return BY_ID[id]; }).filter(Boolean);
@@ -1383,7 +2169,10 @@ function startSession(opts) {
     id: uid('s'),
     mode: opts.mode || 'untimed',
     label: opts.label || 'Mixed',
+    quick: !!opts.quick,
     startedAt: Date.now(),
+    elapsedBefore: 0,
+    segStart: Date.now(),
     queue: pool,
     i: 0,
     answers: pool.map(function () {
@@ -1391,26 +2180,139 @@ function startSession(opts) {
     }),
     qStart: Date.now()
   };
+  mountSession();
+}
+
+/* rebuild the live screen from S — used by both start and resume */
+function mountSession() {
   $('practice').classList.remove('hidden');
-  $('modeBadge').textContent = { timed: 'Timed', untimed: 'Untimed', openbook: 'Open book' }[S.mode];
+  $('pauseOverlay').classList.add('hidden');
+  $('modeBadge').textContent = MODE_LABEL[S.mode] || S.mode;
   $('qLabel').textContent = '· ' + S.label;
   setOpenBook(S.mode === 'openbook');
   $('obBtn').classList.toggle('hidden', S.mode !== 'openbook');
+  $('pFinish').classList.toggle('hidden', !S.quick);
+  setElimMode(!!S.elim);
+  S.segStart = Date.now();
   startTimer();
   paintQuestion();
 }
 
 var timerHandle = null;
+function sessionElapsedMs() {
+  if (!S) return 0;
+  return (S.elapsedBefore || 0) + (S.segStart ? (Date.now() - S.segStart) : 0);
+}
 function startTimer() {
   clearInterval(timerHandle);
   timerHandle = setInterval(function () {
     if (!S) return;
     var el2 = $('timer');
-    if (S.mode === 'timed') el2.textContent = mmss((Date.now() - S.startedAt) / 1000);
+    if (S.mode === 'timed') el2.textContent = mmss(sessionElapsedMs() / 1000);
     else el2.textContent = '—';
   }, 500);
 }
 function stopTimer() { clearInterval(timerHandle); timerHandle = null; }
+
+/* ---------- pause / resume ---------- */
+function serialiseSession() {
+  return {
+    id: S.id, mode: S.mode, label: S.label, quick: !!S.quick, elim: !!S.elim,
+    startedAt: S.startedAt,
+    elapsedBefore: sessionElapsedMs(),
+    qids: S.queue.map(function (q) { return q.id; }),
+    i: S.i,
+    answers: S.answers,
+    pausedAt: Date.now()
+  };
+}
+function pauseSession() {
+  if (!S) return;
+  // bank the time spent on the question currently open
+  var a = S.answers[S.i];
+  if (!a.submitted) a.seconds = Math.round((Date.now() - S.qStart) / 1000);
+
+  DB.paused = serialiseSession();
+  save('paused');
+  stopTimer();
+  $('pauseMeta').textContent = S.quick
+    ? 'Quick Practice held at question ' + (S.i + 1) + '. Saved to your account — resume on any browser.'
+    : MODE_LABEL[S.mode] + ' · ' + S.label + ' held at question ' + (S.i + 1) + ' of ' + S.queue.length +
+      (S.mode === 'timed' ? ' · clock stopped at ' + mmss(sessionElapsedMs() / 1000) : '') +
+      '. Saved to your account — resume on any browser.';
+  $('pauseOverlay').classList.remove('hidden');
+  pushNow();
+}
+function resumePaused() {
+  var p = DB.paused;
+  if (!p) { toast('Nothing paused'); return; }
+  var queue = p.qids.map(function (id) { return BY_ID[id]; }).filter(Boolean);
+  if (queue.length !== p.qids.length) { toast('Some questions in that session are missing from the bank'); }
+  if (!queue.length) { DB.paused = null; save('paused'); toast('That session could not be restored'); return; }
+  S = {
+    id: p.id, mode: p.mode, label: p.label, quick: !!p.quick, elim: !!p.elim,
+    startedAt: p.startedAt, elapsedBefore: p.elapsedBefore || 0, segStart: Date.now(),
+    queue: queue, i: Math.min(p.i || 0, queue.length - 1),
+    answers: p.answers && p.answers.length === queue.length ? p.answers : queue.map(function () {
+      return { selected: null, struck: [], submitted: false, seconds: 0, flagged: false, flagReason: null, collections: [] };
+    }),
+    qStart: Date.now()
+  };
+  DB.paused = null; save('paused');
+  mountSession();
+}
+function paintResumeBar() {
+  var slot = $('resumeSlot');
+  if (!slot) return;
+  var p = DB.paused;
+  if (!p) { slot.innerHTML = ''; return; }
+  var done = (p.answers || []).filter(function (a) { return a.submitted; }).length;
+  slot.innerHTML =
+    '<div class="resume-bar"><div><div class="rb-t">Paused · ' + esc(p.label) + '</div>' +
+    '<div class="rb-m">' + esc(MODE_LABEL[p.mode] || p.mode) + ' · question ' + ((p.i || 0) + 1) + ' of ' + p.qids.length +
+    ' · ' + done + ' answered · paused ' + fmtDateTime(p.pausedAt) + '</div></div>' +
+    '<div class="act-row"><button class="btn small" id="rbResume">Resume</button>' +
+    '<button class="btn small ghost" id="rbDrop">Discard</button></div></div>';
+  $('rbResume').onclick = resumePaused;
+  $('rbDrop').onclick = function () {
+    if (!confirm('Discard the paused session? Questions you already answered stay logged.')) return;
+    DB.paused = null; save('paused'); RENDER.dashboard();
+  };
+}
+$('pauseBtn').addEventListener('click', pauseSession);
+$('pauseResume').addEventListener('click', function () {
+  $('pauseOverlay').classList.add('hidden');
+  resumePaused();
+});
+$('pauseLeave').addEventListener('click', function () {
+  $('pauseOverlay').classList.add('hidden');
+  $('practice').classList.add('hidden');
+  S = null;
+  renderAll(); paintChrome();
+  go('dashboard');
+});
+
+/* ---------- quick practice ---------- */
+$('btnQuickPractice').addEventListener('click', function () {
+  var seen = {}; DB.attempts.forEach(function (a) { seen[a.qid] = 1; });
+  var fresh = BANK.filter(function (q) { return !seen[q.id]; });
+  var pool = shuffle(fresh.length >= 10 ? fresh : BANK);
+  if (!pool.length) { toast('No questions loaded'); return; }
+  SESSION_LEN = Math.min(60, pool.length);
+  startSession({
+    mode: 'quick', label: 'Quick Practice', quick: true,
+    ids: pool.slice(0, SESSION_LEN).map(function (q) { return q.id; }), ordered: true
+  });
+});
+$('pFinish').addEventListener('click', function () {
+  if (!S || !S.quick) return;
+  var answered = S.answers.filter(function (a) { return a.submitted; }).length;
+  if (!answered) {
+    if (!confirm('Finish without answering anything? Nothing will be logged.')) return;
+    closePractice(); return;
+  }
+  finishSession();
+});
 
 function cur() { return { q: S.queue[S.i], a: S.answers[S.i] }; }
 
@@ -1428,29 +2330,61 @@ function paintQuestion() {
   $('qStem').textContent = q.prompt;
 
   $('qChoices').innerHTML = q.choices.map(function (ch, i) {
-    return '<button class="choice" data-i="' + i + '"><span class="letter">' + LETTERS[i] + '</span><span>' + ch + '</span></button>';
+    return '<div class="choice-row" data-row="' + i + '">' +
+      '<button class="choice" data-i="' + i + '"><span class="letter">' + LETTERS[i] + '</span><span>' + ch + '</span></button>' +
+      '<button class="elim-btn" data-elim="' + i + '" title="Cross out ' + LETTERS[i] + '">' + LETTERS[i] + '</button>' +
+      '</div>';
   }).join('');
-  Array.prototype.forEach.call($('qChoices').children, function (btn) {
+  $('qChoices').querySelectorAll('.choice').forEach(function (btn) {
     btn.onclick = function (e) {
       var i = +btn.dataset.i;
       if (e.altKey) { toggleStrike(i); return; }
-      if (a.submitted && S.mode !== 'timed') return;
+      if (a.submitted && immediateFeedback()) return;
       a.selected = i; paintChoiceState();
     };
+  });
+  $('qChoices').querySelectorAll('.elim-btn').forEach(function (btn) {
+    btn.onclick = function (e) { e.stopPropagation(); toggleStrike(+btn.dataset.elim); };
   });
   paintChoiceState();
 
   $('flagBtn').classList.toggle('on', !!a.flagged);
+  paintNoteDot();
   $('sessMeta').textContent = sessionMetaText();
   $('pPrev').disabled = S.i === 0;
 
   // feedback state
-  if (a.submitted && S.mode !== 'timed') showFeedback(); else hideFeedback();
+  if (a.submitted && immediateFeedback()) showFeedback(); else hideFeedback();
   $('pMain').textContent = (a.submitted || S.mode === 'timed')
     ? (S.i === S.queue.length - 1 ? 'Finish session' : 'Next question')
     : 'Submit';
 
   if (S.mode === 'openbook') paintOpenBook(q.type);
+}
+
+/* ---------- elimination (DSAT-style) ---------- */
+function setElimMode(on) {
+  if (S) S.elim = !!on;
+  $('qChoices').classList.toggle('elim', !!on);
+  $('elimToggle').classList.toggle('on', !!on);
+}
+$('elimToggle').addEventListener('click', function () {
+  setElimMode(!(S && S.elim));
+});
+
+/* ---------- per-question note indicator ---------- */
+function noteFor(qid) { return (DB.qnotes && DB.qnotes[qid]) || null; }
+function setNote(qid, text) {
+  if (!DB.qnotes) DB.qnotes = {};
+  text = String(text == null ? '' : text).trim();
+  if (!text) delete DB.qnotes[qid];
+  else DB.qnotes[qid] = { text: text, ts: Date.now() };
+  save('qnotes');
+}
+function paintNoteDot() {
+  var has = S && noteFor(cur().q.id);
+  $('qnoteDot').innerHTML = has ? '<span class="has-note-dot"></span>' : '';
+  $('qnoteBtn').classList.toggle('warn-on', !!has);
 }
 function sessionMetaText() {
   var done = S.answers.filter(function (a) { return a.submitted; }).length;
@@ -1461,14 +2395,21 @@ function sessionMetaText() {
 }
 function paintChoiceState() {
   var c = cur(), q = c.q, a = c.a;
-  Array.prototype.forEach.call($('qChoices').children, function (btn) {
+  $('qChoices').querySelectorAll('.choice').forEach(function (btn) {
     var i = +btn.dataset.i;
     btn.className = 'choice';
     if (a.struck.indexOf(i) > -1) btn.classList.add('struck');
-    if (a.submitted && S.mode !== 'timed') {
+    if (a.submitted && immediateFeedback()) {
       if (i === q.answer) btn.classList.add('right');
       else if (i === a.selected) btn.classList.add('wrong');
     } else if (a.selected === i) btn.classList.add('picked');
+  });
+  $('qChoices').querySelectorAll('.elim-btn').forEach(function (btn) {
+    var i = +btn.dataset.elim;
+    var struck = a.struck.indexOf(i) > -1;
+    btn.classList.toggle('undo', struck);
+    btn.textContent = struck ? 'Undo' : LETTERS[i];
+    btn.title = (struck ? 'Restore ' : 'Cross out ') + LETTERS[i];
   });
 }
 function toggleStrike(i) {
@@ -1494,7 +2435,18 @@ function showFeedback() {
   }
   $('explain').innerHTML = html;
   paintFlagReasons();
+  var n = noteFor(q.id);
+  $('drawerNoteText').value = n ? n.text : '';
+  $('drawerNoteText').placeholder = ok
+    ? 'What made this one work? The cue you spotted, the rule you applied…'
+    : 'Why you missed it, the trap, the rule to remember next time…';
 }
+$('drawerNoteSave').addEventListener('click', function () {
+  if (!S) return;
+  setNote(cur().q.id, $('drawerNoteText').value);
+  paintNoteDot();
+  toast($('drawerNoteText').value.trim() ? 'Note saved' : 'Note cleared');
+});
 function paintFlagReasons() {
   var a = cur().a;
   document.querySelectorAll('#flagReasons .fr').forEach(function (b) {
@@ -1562,6 +2514,79 @@ $('flagBtn').addEventListener('click', function () {
 });
 $('saveBtn').addEventListener('click', function () { openCollectionSheet(cur().q.id); });
 $('obBtn').addEventListener('click', function () { setOpenBook($('openbook').classList.contains('hidden')); });
+
+/* ---------- log an unknown word, define it later ---------- */
+function selectedWord() {
+  var s = '';
+  try { s = String(window.getSelection ? window.getSelection().toString() : ''); } catch (e) {}
+  s = s.trim().replace(/\s+/g, ' ');
+  return (s && s.length <= 40) ? s : '';
+}
+function logWord(word, qid, ctx) {
+  word = String(word || '').trim();
+  if (!word) return false;
+  var dupe = DB.vocab.filter(function (v) { return v.word.toLowerCase() === word.toLowerCase(); })[0];
+  if (dupe) { toast('"' + word + '" is already in your vocab'); return false; }
+  DB.vocab.push({
+    id: uid('v'), word: word, pos: '', def1: '', def2: '', note: '',
+    pending: true, qid: qid || null, context: ctx || '', ts: Date.now()
+  });
+  save('vocab');
+  return true;
+}
+$('wordBtn').addEventListener('click', function () {
+  if (!S) return;
+  var q = cur().q;
+  var pre = selectedWord();
+  modal(
+    '<h3>Log a word</h3><p class="sh-sub">Capture it now, define it later in Toolbox → Vocabs.</p>' +
+    '<div class="field"><label>Word or phrase</label><input id="lwWord" value="' + esc(pre) + '" placeholder="e.g. equivocal" autocomplete="off"></div>' +
+    '<div class="field"><label>Context · optional</label><input id="lwCtx" placeholder="the sentence it appeared in"></div>' +
+    '<p class="sh-sub" style="margin:-4px 0 14px">From ' + esc(q.type) + ' · ID ' + esc(q.id) + '</p>' +
+    '<div style="display:flex;gap:10px"><button class="btn ghost small" style="flex:1" data-x="c">Cancel</button>' +
+    '<button class="btn small" style="flex:2" data-x="s">Log it</button></div>',
+    function (m) {
+      var input = m.querySelector('#lwWord');
+      input.focus(); input.select();
+      m.querySelector('[data-x=c]').onclick = closeModal;
+      function commit() {
+        var wd = input.value.trim();
+        if (!wd) { toast('Type the word first'); return; }
+        if (logWord(wd, q.id, m.querySelector('#lwCtx').value.trim())) toast('Logged "' + wd + '" — define it in Toolbox');
+        closeModal();
+      }
+      m.querySelector('[data-x=s]').onclick = commit;
+      input.onkeydown = function (e) { if (e.key === 'Enter') { e.preventDefault(); commit(); } };
+    }
+  );
+});
+
+/* ---------- per-question note, from anywhere ---------- */
+function openNoteEditor(qid, after) {
+  var q = BY_ID[qid];
+  var n = noteFor(qid);
+  modal(
+    '<h3>Your note</h3><p class="sh-sub">' + (q ? esc(q.type) + ' · ' + esc(q.domain) + ' · ' : '') + 'ID ' + esc(qid) + '</p>' +
+    '<div class="field"><textarea id="qnEdit" style="min-height:150px;line-height:1.6" ' +
+    'placeholder="Strategy, the trap, the grammar rule, why you got it wrong, the pattern to remember…">' + esc(n ? n.text : '') + '</textarea></div>' +
+    '<div style="display:flex;gap:10px"><button class="btn ghost small" style="flex:1" data-x="c">Cancel</button>' +
+    '<button class="btn small" style="flex:2" data-x="s">Save note</button></div>',
+    function (m) {
+      var ta = m.querySelector('#qnEdit');
+      ta.focus();
+      ta.setSelectionRange(ta.value.length, ta.value.length);
+      m.querySelector('[data-x=c]').onclick = closeModal;
+      m.querySelector('[data-x=s]').onclick = function () {
+        setNote(qid, ta.value);
+        closeModal();
+        toast(ta.value.trim() ? 'Note saved' : 'Note cleared');
+        if (S) { paintNoteDot(); if (!$('drawer').classList.contains('hidden')) $('drawerNoteText').value = ta.value; }
+        if (after) after();
+      };
+    }
+  );
+}
+$('qnoteBtn').addEventListener('click', function () { if (S) openNoteEditor(cur().q.id); });
 function setOpenBook(on) {
   $('openbook').classList.toggle('hidden', !on);
   $('qBody').classList.toggle('ob', !!on);
@@ -1588,15 +2613,19 @@ function finishSession() {
     save('sessions');
     showSummary(S, right, answered);
   }
+  if (DB.paused && DB.paused.id === S.id) { DB.paused = null; save('paused'); }
   stopTimer();
   $('practice').classList.add('hidden');
   S = null;
   renderAll(); paintChrome();
+  pushNow();
 }
 
 /* keyboard */
 document.addEventListener('keydown', function (e) {
   if (!S || $('practice').classList.contains('hidden')) return;
+  if (!$('modal').classList.contains('hidden')) return;
+  if (!$('pauseOverlay').classList.contains('hidden')) return;
   if (/input|textarea|select/i.test(e.target.tagName)) return;
   var k = e.key.toUpperCase();
   var idx = LETTERS.indexOf(k);
@@ -1604,12 +2633,15 @@ document.addEventListener('keydown', function (e) {
   if (idx > -1) {
     e.preventDefault();
     if (e.altKey) toggleStrike(idx);
-    else { var a = cur().a; if (!(a.submitted && S.mode !== 'timed')) { a.selected = idx; paintChoiceState(); } }
+    else { var a = cur().a; if (!(a.submitted && immediateFeedback())) { a.selected = idx; paintChoiceState(); } }
     return;
   }
   if (e.key === 'Enter') { e.preventDefault(); $('pMain').click(); }
   else if (k === 'F') { e.preventDefault(); $('flagBtn').click(); }
   else if (k === 'S') { e.preventDefault(); $('saveBtn').click(); }
+  else if (k === 'W') { e.preventDefault(); $('wordBtn').click(); }
+  else if (k === 'N') { e.preventDefault(); $('qnoteBtn').click(); }
+  else if (k === 'P') { e.preventDefault(); $('pauseBtn').click(); }
   else if (e.key === 'Escape') { $('pExit').click(); }
 });
 
@@ -1722,6 +2754,13 @@ function openCollectionSheet(qid) {
 RENDER.sets = function () {
   $('setsSub').textContent = DB.collections.length + ' collections · ' +
     DB.collections.reduce(function (a, c) { return a + c.qids.length; }, 0) + ' saved questions';
+
+  // add-by-ID target list, preserving the current choice
+  var keep = $('addIdColl').value;
+  $('addIdColl').innerHTML = DB.collections.map(function (c) {
+    return '<option value="' + esc(c.id) + '">' + esc(c.name) + '</option>';
+  }).join('');
+  if (keep && DB.collections.some(function (c) { return c.id === keep; })) $('addIdColl').value = keep;
   $('setGrid').innerHTML = DB.collections.map(function (c) {
     var seen = {}; DB.attempts.forEach(function (a) { seen[a.qid] = a.correct; });
     var done = c.qids.filter(function (q) { return seen[q]; }).length;
@@ -1775,18 +2814,26 @@ function showSetDetail(cid) {
   DB.attempts.forEach(function (a) { last[a.qid] = a; });
   $('setDetail').innerHTML =
     '<h2 class="sec">' + esc(c.name) + '</h2><p class="sec-sub">' + c.qids.length + ' questions</p>' +
-    (c.qids.length ? '<div class="tbl-wrap"><table class="grid"><thead><tr><th>ID</th><th>Question type</th><th>Diff</th><th>Last result</th><th>Time</th><th></th></tr></thead><tbody>' +
+    (c.qids.length ? '<div class="tbl-wrap"><table class="grid"><thead><tr><th>ID</th><th>Question type</th><th>Diff</th><th>Last result</th><th>Time</th><th>Note</th><th></th></tr></thead><tbody>' +
       c.qids.map(function (qid) {
-        var q = BY_ID[qid], a = last[qid];
+        var q = BY_ID[qid], a = last[qid], n = noteFor(qid);
         return '<tr><td class="mono">' + esc(qid) + '</td><td>' + esc(q ? q.type : '—') + '</td>' +
           '<td class="mono">' + (q ? q.difficulty : '—') + '</td>' +
           '<td>' + (a ? (a.correct ? '<span class="cell-good">Right</span>' : '<span class="cell-bad">Wrong</span>') : '<span class="muted">unseen</span>') + '</td>' +
           '<td class="mono">' + (a && a.seconds ? mmss(a.seconds) : '—') + '</td>' +
-          '<td><button class="btn tiny ghost" data-rm="' + esc(qid) + '">Remove</button></td></tr>';
+          '<td><button class="btn tiny ghost" data-note="' + esc(qid) + '">' + (n ? '● Note' : '+ Note') + '</button></td>' +
+          '<td><div class="act-row"><button class="btn tiny ghost" data-open="' + esc(qid) + '">View</button>' +
+          '<button class="btn tiny ghost" data-rm="' + esc(qid) + '">Remove</button></div></td></tr>';
       }).join('') + '</tbody></table></div>'
-      : '<div class="empty"><b>Empty</b>Save questions into it from the practice screen.</div>');
+      : '<div class="empty"><b>Empty</b>Save questions into it from the practice screen, or paste an ID into the add box above.</div>');
   $('setDetail').querySelectorAll('[data-rm]').forEach(function (b) {
     b.onclick = function () { removeFromCollection(cid, b.dataset.rm); showSetDetail(cid); RENDER.sets(); };
+  });
+  $('setDetail').querySelectorAll('[data-note]').forEach(function (b) {
+    b.onclick = function () { openNoteEditor(b.dataset.note, function () { showSetDetail(cid); }); };
+  });
+  $('setDetail').querySelectorAll('[data-open]').forEach(function (b) {
+    b.onclick = function () { showQuestionDetail(b.dataset.open); };
   });
   if ($('setDetail').scrollIntoView) $('setDetail').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -1799,19 +2846,58 @@ $('btnNewSet').addEventListener('click', function () {
   }
 });
 
+/* ---------- add a question to a set after the fact, by ID ---------- */
+function addByIdSubmit() {
+  var raw = $('addIdInput').value.trim();
+  var hint = $('addIdHint');
+  if (!raw) { hint.textContent = 'Enter a question ID first.'; return; }
+  var cid = $('addIdColl').value;
+  var c = DB.collections.filter(function (x) { return x.id === cid; })[0];
+  if (!c) { hint.textContent = 'Pick a collection.'; return; }
+
+  // accept several at once, comma or space separated
+  var ids = raw.split(/[\s,]+/).filter(Boolean);
+  var added = 0, dupes = 0, missing = [];
+  ids.forEach(function (id) {
+    var q = BY_ID[id] || BY_ID[id.toLowerCase()] || BY_ID[id.toUpperCase()];
+    if (!q) { missing.push(id); return; }
+    if (c.qids.indexOf(q.id) > -1) { dupes++; return; }
+    c.qids.push(q.id); added++;
+  });
+  if (added) save('collections');
+
+  var msg = [];
+  if (added) msg.push(added + ' added to ' + c.name);
+  if (dupes) msg.push(dupes + ' already there');
+  if (missing.length) msg.push('not in the bank: ' + missing.slice(0, 4).join(', ') + (missing.length > 4 ? '…' : ''));
+  hint.textContent = msg.join(' · ') || 'Nothing to do.';
+  if (added) { $('addIdInput').value = ''; toast(added + ' question' + (added > 1 ? 's' : '') + ' added'); }
+  RENDER.sets();
+  if ($('setDetail').innerHTML) showSetDetail(cid);
+}
+$('addIdBtn').addEventListener('click', addByIdSubmit);
+$('addIdInput').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addByIdSubmit(); } });
+
 /* ============================================================
    ANALYTICS
    ============================================================ */
 RENDER.analytics = function () {
   var w = windows(null);
-  $('anStats').innerHTML = ['L10', 'L20', 'L50', 'OVR'].map(function (k) {
+  var totalAtt = DB.attempts.length;
+  $('anStats').innerHTML = WINDOW_KEYS.map(function (k) {
     var v = w[k];
+    var need = WINDOW_MIN[k] || 0;
+    var locked = !v && need > 1 && totalAtt < need;
     var delta = (v && w.OVR && k !== 'OVR') ? v.pct - w.OVR.pct : null;
-    return '<div class="stat"><div class="n">' + (v ? v.pct + '%' : '—') + '</div>' +
-      '<div class="l">' + k + ' · ' + (v ? v.n + ' attempts' : 'no data') + '</div>' +
+    return '<div class="stat' + (locked ? ' locked' : '') + '"><div class="n">' + (v ? v.pct + '%' : '—') + '</div>' +
+      '<div class="l">' + k + ' · ' + (v ? v.n + ' attempts' : (locked ? 'locked' : 'no data')) + '</div>' +
       '<div class="d ' + (delta > 0 ? 'up' : delta < 0 ? 'down' : '') + '">' +
-      (delta == null ? (k === 'OVR' ? 'baseline' : '—') : delta === 0 ? 'level with OVR' : (delta > 0 ? '+' : '') + delta + ' vs OVR') + '</div></div>';
+      (locked ? '<span class="win-lock">' + (need - totalAtt) + ' more to unlock</span>'
+        : delta == null ? (k === 'OVR' ? 'baseline' : '—')
+        : delta === 0 ? 'level with OVR' : (delta > 0 ? '+' : '') + delta + ' vs OVR') + '</div></div>';
   }).join('');
+
+  renderTypeTrend();
 
   // chart
   var series = sessionSeries();
@@ -1844,11 +2930,11 @@ RENDER.analytics = function () {
   // per type table
   var rows = '';
   DOMAINS.forEach(function (d) {
-    rows += '<tr class="dom-head"><td colspan="7">' + esc(d.name) + '</td></tr>';
+    rows += '<tr class="dom-head"><td colspan="8">' + esc(d.name) + '</td></tr>';
     d.types.forEach(function (t) {
       var tw = windows(t);
       if (!tw.OVR) {
-        rows += '<tr><td>' + esc(t) + '</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="trend muted">no data</td></tr>';
+        rows += '<tr><td>' + esc(t) + '</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">0</td><td class="trend muted">no data</td></tr>';
         return;
       }
       var delta = tw.L10 ? tw.L10.pct - tw.OVR.pct : null;
@@ -1857,13 +2943,13 @@ RENDER.analytics = function () {
         var cls = v.pct >= 80 ? 'cell-good' : v.pct < 55 ? 'cell-bad' : '';
         return '<td class="num ' + cls + '">' + v.pct + '</td>';
       }
-      rows += '<tr><td>' + esc(t) + '</td>' + cell(tw.L10) + cell(tw.L20) + cell(tw.L50) + cell(tw.OVR) +
+      rows += '<tr><td>' + esc(t) + '</td>' + cell(tw.L10) + cell(tw.L20) + cell(tw.L40) + cell(tw.L50) + cell(tw.OVR) +
         '<td class="num">' + tw.OVR.n + '</td><td class="trend ' + (delta > 0 ? 'up' : delta < 0 ? 'down' : '') + '">' +
         (delta == null ? '—' : (delta > 0 ? '▲ +' : delta < 0 ? '▼ ' : '– ') + delta) + '</td></tr>';
     });
   });
   $('anTypes').innerHTML = '<table class="grid"><thead><tr><th>Question type</th><th class="numh">L10</th>' +
-    '<th class="numh">L20</th><th class="numh">L50</th><th class="numh">OVR</th><th class="numh">Seen</th><th>L10 vs OVR</th></tr></thead><tbody>' +
+    '<th class="numh">L20</th><th class="numh">L40</th><th class="numh">L50</th><th class="numh">OVR</th><th class="numh">Seen</th><th>L10 vs OVR</th></tr></thead><tbody>' +
     rows + '</tbody></table>';
 
   // pace
@@ -1881,6 +2967,84 @@ RENDER.analytics = function () {
   '<p style="font-size:12px;color:var(--text-on-paper-soft);line-height:1.55;margin:14px 0 0">' +
   'Anything over 2× the pace target gets flagged automatically, right or wrong. Slow and correct is still a leak.</p>';
 };
+
+/* ============================================================
+   PER-TYPE L10 TREND
+   ============================================================ */
+var TYPE_COLORS = [
+  '#335745', '#A6452A', '#B8894F', '#4C7A63', '#7A5A26',
+  '#2F5D74', '#8D4E7A', '#5F6B32', '#C06B3E', '#3F6E8C',
+  '#8D8871', '#6B4C8D', '#A03A4E'
+];
+function typeColor(t) { return TYPE_COLORS[TYPES.indexOf(t) % TYPE_COLORS.length]; }
+
+var TYPE_ON = null;
+function defaultTypeSelection() {
+  var ranked = TYPES.map(function (t) { return { t: t, w: windows(t) }; })
+    .filter(function (r) { return r.w.OVR && r.w.OVR.n >= 3; })
+    .sort(function (a, b) { return a.w.OVR.pct - b.w.OVR.pct; })
+    .slice(0, 5).map(function (r) { return r.t; });
+  var sel = {};
+  (ranked.length ? ranked : TYPES.slice(0, 5)).forEach(function (t) { sel[t] = true; });
+  return sel;
+}
+
+function renderTypeTrend() {
+  if (!TYPE_ON) TYPE_ON = defaultTypeSelection();
+
+  $('typeToggles').innerHTML = TYPES.map(function (t) {
+    var n = attemptsFor(t).length;
+    return '<button class="tt' + (TYPE_ON[t] ? ' on' : '') + '" data-t="' + esc(t) + '" style="color:' + typeColor(t) + '">' +
+      '<span class="sw"></span>' + esc(t) + ' <span style="opacity:.6">' + n + '</span></button>';
+  }).join('');
+  $('typeToggles').querySelectorAll('.tt').forEach(function (b) {
+    b.onclick = function () { TYPE_ON[b.dataset.t] = !TYPE_ON[b.dataset.t]; renderTypeTrend(); };
+  });
+
+  var series = TYPES.filter(function (t) { return TYPE_ON[t]; })
+    .map(function (t) { return { type: t, pts: rollingL10(t) }; })
+    .filter(function (s) { return s.pts.length >= 2; });
+
+  if (!series.length) {
+    $('anTypeTrend').innerHTML = '<div class="empty"><b>Nothing to plot</b>' +
+      'Turn on a question type above. A line appears once you have attempted that type at least twice.</div>';
+    return;
+  }
+
+  var W = 900, H = 260, L = 42, R = 884, T = 16, B = 218;
+  var maxN = series.reduce(function (m, s) { return Math.max(m, s.pts.length); }, 0);
+  function X(i) { return L + (maxN <= 1 ? 0 : ((i - 1) / (maxN - 1)) * (R - L)); }
+  function Y(p) { return B - (p / 100) * (B - T); }
+
+  var grid = '';
+  [0, 25, 50, 75, 100].forEach(function (v) {
+    grid += '<line x1="' + L + '" y1="' + Y(v).toFixed(1) + '" x2="' + R + '" y2="' + Y(v).toFixed(1) + '" stroke="#D8CCA9"/>' +
+      '<text x="10" y="' + (Y(v) + 3.5).toFixed(1) + '" font-family="IBM Plex Mono, monospace" font-size="10" fill="#5B5847">' + v + '</text>';
+  });
+
+  var lines = series.map(function (s) {
+    var pts = s.pts.map(function (p) { return X(p.i).toFixed(1) + ',' + Y(p.pct).toFixed(1); }).join(' ');
+    var last = s.pts[s.pts.length - 1];
+    return '<polyline fill="none" stroke="' + typeColor(s.type) + '" stroke-width="2.4" stroke-linejoin="round" ' +
+      'stroke-linecap="round" points="' + pts + '"><title>' + esc(s.type) + '</title></polyline>' +
+      '<circle cx="' + X(last.i).toFixed(1) + '" cy="' + Y(last.pct).toFixed(1) + '" r="4" fill="' + typeColor(s.type) + '">' +
+      '<title>' + esc(s.type) + ' — ' + last.pct + '% over its last ' + last.n + '</title></circle>';
+  }).join('');
+
+  $('anTypeTrend').innerHTML =
+    '<svg viewBox="0 0 ' + W + ' ' + H + '" style="width:100%;height:250px">' + grid + lines +
+    '<text x="' + L + '" y="' + (B + 22) + '" font-family="IBM Plex Mono, monospace" font-size="10" fill="#5B5847">1st attempt of that type</text>' +
+    '<text x="' + R + '" y="' + (B + 22) + '" text-anchor="end" font-family="IBM Plex Mono, monospace" font-size="10" fill="#5B5847">' + maxN + 'th</text>' +
+    '</svg>' +
+    '<p style="font-size:11.5px;color:var(--text-on-paper-soft);line-height:1.55;margin:10px 0 0">' +
+    'Each point is that type\'s accuracy over its own trailing 10 attempts. Early points use a shorter window because fewer questions exist behind them.</p>';
+}
+
+$('ttAll').addEventListener('click', function () {
+  TYPE_ON = {}; TYPES.forEach(function (t) { TYPE_ON[t] = true; }); renderTypeTrend();
+});
+$('ttNone').addEventListener('click', function () { TYPE_ON = {}; renderTypeTrend(); });
+$('ttWeak').addEventListener('click', function () { TYPE_ON = defaultTypeSelection(); renderTypeTrend(); });
 
 /* ============================================================
    HISTORY
@@ -1963,9 +3127,22 @@ function showQuestionDetail(qid) {
     (q.rationale ? '<div style="margin-top:16px;padding:12px;background:var(--verdigris-tint);border-radius:4px">' +
       '<div style="font-size:12px;color:var(--verdigris-dark);font-weight:600;margin-bottom:6px">EXPLANATION</div>' +
       '<div style="font-size:13px;line-height:1.55">' + esc(q.rationale) + '</div></div>' : '') +
-    '<div style="display:flex;gap:10px;margin-top:16px"><button class="btn ghost small" style="flex:1" data-x="close">Close</button></div>';
+    '<div class="qnote-box" style="margin-top:18px">' +
+      '<div class="qn-head"><span class="qn-lbl">Your note on this question</span>' +
+      '<button class="btn tiny" data-x="note">Save note</button></div>' +
+      '<textarea data-x="notetext" placeholder="Strategy, the trap, the grammar rule, why you got it wrong, the pattern to remember…">' +
+      esc(noteFor(qid) ? noteFor(qid).text : '') + '</textarea></div>' +
+    '<div style="display:flex;gap:10px;margin-top:16px">' +
+      '<button class="btn ghost small" style="flex:1" data-x="close">Close</button>' +
+      '<button class="btn ghost small" style="flex:1" data-x="addset">Add to a set</button></div>';
   modal(html, function (m) {
     m.querySelector('[data-x=close]').onclick = closeModal;
+    m.querySelector('[data-x=addset]').onclick = function () { openCollectionSheet(qid); };
+    m.querySelector('[data-x=note]').onclick = function () {
+      setNote(qid, m.querySelector('[data-x=notetext]').value);
+      toast(m.querySelector('[data-x=notetext]').value.trim() ? 'Note saved' : 'Note cleared');
+      if (RENDER.toolbox) RENDER.toolbox();
+    };
   });
 }
 
@@ -2000,19 +3177,70 @@ RENDER.toolbox = function () {
     };
   });
 
-  // vocab
-  $('vocabGrid').innerHTML = DB.vocab.length ? DB.vocab.slice().reverse().map(function (v) {
+  // word queue — logged mid-question, definitions still missing
+  var pending = DB.vocab.filter(function (v) { return v.pending; }).slice().reverse();
+  $('wordQueue').innerHTML = pending.length ? pending.map(function (v) {
+    return '<div class="wq-item"><span class="wq-w">' + esc(v.word) + '</span>' +
+      '<span class="wq-src">' + fmtDate(v.ts) + (v.qid ? ' · ' + esc(v.qid) : '') + '</span>' +
+      (v.context ? '<span class="wq-src" style="flex-basis:100%">“' + esc(v.context) + '”</span>' : '') +
+      '<span class="wq-act"><button class="btn tiny" data-def="' + v.id + '">Define</button>' +
+      '<button class="btn tiny ghost" data-dv="' + v.id + '">Discard</button></span></div>';
+  }).join('')
+    : '<div class="empty" style="border:none;padding:16px 12px"><b>Queue is empty</b>' +
+      'Hit <b style="display:inline">Word</b> in the top right of any question to drop one in here.</div>';
+  $('wordQueue').querySelectorAll('[data-def]').forEach(function (b) {
+    b.onclick = function () { openWordEditor(b.dataset.def); };
+  });
+
+  // vocab — defined words only
+  var defined = DB.vocab.filter(function (v) { return !v.pending; }).slice().reverse();
+  $('vocabGrid').innerHTML = defined.length ? defined.map(function (v) {
     return '<div class="card vocab"><div class="head-row"><div><span class="w">' + esc(v.word) + '</span>' +
       (v.pos ? '<span class="pos">' + esc(v.pos) + '</span>' : '') + '</div>' +
       '<button class="x-btn" data-dv="' + v.id + '" title="Delete">✕</button></div>' +
       (v.def1 ? '<div class="d1">' + esc(v.def1) + '</div>' : '') +
       (v.def2 ? '<div class="d2"><span>Tested sense</span>' + esc(v.def2) + '</div>' : '') +
-      (v.note ? '<div class="vn">' + esc(v.note) + '</div>' : '') + '</div>';
+      (v.note ? '<div class="vn">' + esc(v.note) + '</div>' : '') +
+      '<div class="s-actions"><button class="btn tiny ghost" data-def="' + v.id + '">Edit</button></div></div>';
   }).join('') : '<div class="empty"><b>No words yet</b>Add the word, the definition you knew, and the sense the test actually used.</div>';
-  $('vocabGrid').querySelectorAll('[data-dv]').forEach(function (b) {
+  $('vocabGrid').querySelectorAll('[data-def]').forEach(function (b) {
+    b.onclick = function () { openWordEditor(b.dataset.def); };
+  });
+  document.querySelectorAll('#tool-vocab [data-dv]').forEach(function (b) {
     b.onclick = function () {
       DB.vocab = DB.vocab.filter(function (v) { return v.id !== b.dataset.dv; });
       save('vocab'); RENDER.toolbox();
+    };
+  });
+
+  // question notes
+  var qn = Object.keys(DB.qnotes || {}).map(function (k) {
+    return { qid: k, note: DB.qnotes[k] };
+  }).sort(function (a, b) { return (b.note.ts || 0) - (a.note.ts || 0); });
+  $('qnoteList').innerHTML = qn.length ? qn.map(function (r) {
+    var q = BY_ID[r.qid];
+    var a = DB.attempts.filter(function (x) { return x.qid === r.qid; }).slice(-1)[0];
+    return '<div class="qn-card"><div class="qc-top">' +
+      '<span class="chip' + (q ? '' : ' o') + '">' + esc(q ? q.type : 'not in bank') + '</span>' +
+      '<span class="qc-id">' + esc(r.qid) + '</span>' +
+      (a ? '<span class="qc-id">' + (a.correct ? '<span class="cell-good">last: right</span>' : '<span class="cell-bad">last: wrong</span>') + '</span>' : '') +
+      '<span class="qc-id" style="margin-left:auto">' + fmtDate(r.note.ts) + '</span></div>' +
+      '<div class="qc-body">' + esc(r.note.text) + '</div>' +
+      '<div class="qc-act"><button class="btn tiny ghost" data-qn="' + esc(r.qid) + '">Edit</button>' +
+      (q ? '<button class="btn tiny ghost" data-qv="' + esc(r.qid) + '">View question</button>' : '') +
+      '<button class="btn tiny danger" data-qd="' + esc(r.qid) + '">Delete</button></div></div>';
+  }).join('') : '<div class="empty"><b>No question notes yet</b>' +
+    'Press <b style="display:inline">Note</b> during practice, or open any question from History and write one there.</div>';
+  $('qnoteList').querySelectorAll('[data-qn]').forEach(function (b) {
+    b.onclick = function () { openNoteEditor(b.dataset.qn, RENDER.toolbox); };
+  });
+  $('qnoteList').querySelectorAll('[data-qv]').forEach(function (b) {
+    b.onclick = function () { showQuestionDetail(b.dataset.qv); };
+  });
+  $('qnoteList').querySelectorAll('[data-qd]').forEach(function (b) {
+    b.onclick = function () {
+      if (!confirm('Delete the note on ' + b.dataset.qd + '?')) return;
+      setNote(b.dataset.qd, ''); RENDER.toolbox();
     };
   });
 
@@ -2052,12 +3280,53 @@ $('noteAdd').addEventListener('click', function () {
 });
 $('noteText').addEventListener('keydown', function (e) { if (e.key === 'Enter') $('noteAdd').click(); });
 
+/* fill in a queued word, or edit a defined one */
+function openWordEditor(vid) {
+  var v = DB.vocab.filter(function (x) { return x.id === vid; })[0];
+  if (!v) { toast('Word not found'); return; }
+  modal(
+    '<h3>' + esc(v.word) + '</h3><p class="sh-sub">' +
+    (v.qid ? 'Logged from question ' + esc(v.qid) + ' · ' : '') + fmtDate(v.ts) + '</p>' +
+    (v.context ? '<p class="sh-sub" style="margin-top:-10px">“' + esc(v.context) + '”</p>' : '') +
+    '<div class="row2"><div class="field"><label>Word</label><input id="weWord" value="' + esc(v.word) + '"></div>' +
+    '<div class="field"><label>Part of speech</label><input id="wePos" value="' + esc(v.pos || '') + '" placeholder="n. / v. / adj."></div></div>' +
+    '<div class="field"><label>Common definition</label><input id="weDef1" value="' + esc(v.def1 || '') + '"></div>' +
+    '<div class="field"><label>Secondary / tested sense</label><input id="weDef2" value="' + esc(v.def2 || '') + '"></div>' +
+    '<div class="field"><label>Your note</label><textarea id="weNote" style="min-height:80px">' + esc(v.note || '') + '</textarea></div>' +
+    '<div style="display:flex;gap:10px"><button class="btn ghost small" style="flex:1" data-x="c">Cancel</button>' +
+    '<button class="btn small" style="flex:2" data-x="s">Save</button></div>',
+    function (m) {
+      m.querySelector('#weDef1').focus();
+      m.querySelector('[data-x=c]').onclick = closeModal;
+      m.querySelector('[data-x=s]').onclick = function () {
+        v.word = m.querySelector('#weWord').value.trim() || v.word;
+        v.pos = m.querySelector('#wePos').value.trim();
+        v.def1 = m.querySelector('#weDef1').value.trim();
+        v.def2 = m.querySelector('#weDef2').value.trim();
+        v.note = m.querySelector('#weNote').value.trim();
+        v.pending = !(v.def1 || v.def2);   // still pending until it actually has a definition
+        save('vocab'); closeModal(); RENDER.toolbox();
+        toast(v.pending ? 'Saved — still in the queue until it has a definition' : 'Defined ' + v.word);
+      };
+    }
+  );
+}
+
+$('qnLookupBtn').addEventListener('click', function () {
+  var id = $('qnLookupId').value.trim();
+  if (!id) { toast('Enter a question ID'); return; }
+  var q = BY_ID[id] || BY_ID[id.toLowerCase()];
+  if (!q) { toast('No question with that ID in the bank'); return; }
+  openNoteEditor(q.id, RENDER.toolbox);
+});
+$('qnLookupId').addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); $('qnLookupBtn').click(); } });
+
 $('vAdd').addEventListener('click', function () {
   var w = $('vWord').value.trim();
   if (!w) { toast('Word is required'); return; }
   DB.vocab.push({
     id: uid('v'), word: w, pos: $('vPos').value.trim(), def1: $('vDef1').value.trim(),
-    def2: $('vDef2').value.trim(), note: $('vNote').value.trim(), ts: Date.now()
+    def2: $('vDef2').value.trim(), note: $('vNote').value.trim(), pending: false, ts: Date.now()
   });
   save('vocab');
   ['vWord', 'vPos', 'vDef1', 'vDef2', 'vNote'].forEach(function (id) { $(id).value = ''; });
@@ -2065,7 +3334,124 @@ $('vAdd').addEventListener('click', function () {
 });
 
 /* ============================================================
-   EXPORT / RESET
+   ADMIN — master token only
+   ============================================================ */
+function adm(op, extra) {
+  var body = Object.assign({ sid: AUTH.sid, op: op }, extra || {});
+  return api('admin', body);
+}
+RENDER.admin = function () {
+  if (!(AUTH.account && AUTH.account.isMaster)) {
+    $('admTokens').innerHTML = '<div class="empty" style="border:none"><b>Not authorised</b>This page needs the master key.</div>';
+    $('admAccounts').innerHTML = '';
+    return;
+  }
+  $('admTokSub').textContent = 'loading…';
+  adm('overview').then(function (r) {
+    if (!r.ok) {
+      $('admTokens').innerHTML = '<div class="empty" style="border:none"><b>Could not load</b>' + esc(r.error || '') + '</div>';
+      $('admTokSub').textContent = '—';
+      return;
+    }
+    var toks = r.tokens || [], accs = r.accounts || [];
+    $('admTokSub').textContent = toks.length + ' issued · ' +
+      toks.filter(function (t) { return t.boundDeviceId; }).length + ' bound · ' +
+      toks.filter(function (t) { return t.revoked; }).length + ' revoked';
+    $('admAccSub').textContent = accs.length + ' accounts · ' +
+      accs.filter(function (a) { return a.revoked; }).length + ' revoked';
+
+    $('admTokens').innerHTML = '<table class="grid"><thead><tr><th>Token</th><th>Status</th><th>Browser</th>' +
+      '<th>Account</th><th>Note</th><th>Actions</th></tr></thead><tbody>' +
+      toks.map(function (t) {
+        var master = t.token === 'MA00DC9';
+        return '<tr><td class="mono"><b>' + esc(t.token) + '</b>' + (master ? ' <span class="chip">master</span>' : '') + '</td>' +
+          '<td>' + (t.revoked ? '<span class="badge bad">revoked</span>' : '<span class="badge">active</span>') + '</td>' +
+          '<td>' + (t.boundDeviceId
+            ? '<span class="badge idle">bound ' + fmtDate(t.boundAt) + '</span>'
+            : '<span class="badge idle">unused</span>') + '</td>' +
+          '<td class="mono">' + esc(t.username || '—') + '</td>' +
+          '<td>' + esc(t.note || '') + '</td>' +
+          '<td><div class="act-row">' +
+          (master ? '<span class="muted">protected</span>' :
+            (t.revoked
+              ? '<button class="btn tiny" data-tr="' + esc(t.token) + '">Restore</button>'
+              : '<button class="btn tiny danger" data-tv="' + esc(t.token) + '">Revoke</button>') +
+            (t.boundDeviceId ? '<button class="btn tiny ghost" data-tu="' + esc(t.token) + '">Unbind</button>' : '') +
+            '<button class="btn tiny ghost" data-td="' + esc(t.token) + '">Delete</button>') +
+          '</div></td></tr>';
+      }).join('') + '</tbody></table>';
+
+    $('admAccounts').innerHTML = accs.length ? '<table class="grid"><thead><tr><th>User ID</th><th>Name</th>' +
+      '<th>Token</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>' +
+      accs.map(function (a) {
+        var master = a.isMaster;
+        return '<tr><td class="mono"><b>' + esc(a.username) + '</b></td><td>' + esc(a.name || '—') + '</td>' +
+          '<td class="mono">' + esc(a.token) + '</td>' +
+          '<td>' + (a.revoked ? '<span class="badge bad">revoked</span>' : '<span class="badge">active</span>') + '</td>' +
+          '<td class="mono">' + fmtDate(a.createdAt) + '</td>' +
+          '<td><div class="act-row">' +
+          (master ? '<span class="muted">protected</span>' :
+            (a.revoked
+              ? '<button class="btn tiny" data-ar="' + esc(a.username) + '">Restore</button>'
+              : '<button class="btn tiny danger" data-av="' + esc(a.username) + '">Revoke</button>') +
+            '<button class="btn tiny ghost" data-ap="' + esc(a.username) + '">Reset password</button>' +
+            '<button class="btn tiny ghost" data-ad="' + esc(a.username) + '">Delete</button>') +
+          '</div></td></tr>';
+      }).join('') + '</tbody></table>'
+      : '<div class="empty" style="border:none"><b>No accounts yet</b>They appear as people redeem their tokens.</div>';
+
+    function wire(sel, fn) {
+      document.querySelectorAll('#page-admin [' + sel + ']').forEach(function (b) {
+        b.onclick = function () { fn(b.getAttribute(sel), b); };
+      });
+    }
+    function run(op, extra, msg) {
+      adm(op, extra).then(function (x) {
+        toast(x.ok ? (msg || 'Done') : (x.error || 'Failed'));
+        RENDER.admin();
+      });
+    }
+    wire('data-tv', function (t) { if (confirm('Revoke ' + t + '? Whoever holds it loses access immediately.')) run('tokenRevoke', { token: t }, t + ' revoked'); });
+    wire('data-tr', function (t) { run('tokenRestore', { token: t }, t + ' restored'); });
+    wire('data-tu', function (t) { if (confirm('Unbind ' + t + ' from its browser? It becomes redeemable again.')) run('tokenUnbind', { token: t }, t + ' unbound'); });
+    wire('data-td', function (t) { if (confirm('Delete ' + t + ' permanently?')) run('tokenDelete', { token: t }, t + ' deleted'); });
+    wire('data-av', function (u) { if (confirm('Revoke access for ' + u + '?')) run('accountRevoke', { username: u }, u + ' revoked'); });
+    wire('data-ar', function (u) { run('accountRestore', { username: u }, u + ' restored'); });
+    wire('data-ad', function (u) {
+      if (!confirm('Delete ' + u + ' and all of their saved progress? This cannot be undone.')) return;
+      if (!confirm('Really delete ' + u + '?')) return;
+      run('accountDelete', { username: u }, u + ' deleted');
+    });
+    wire('data-ap', function (u) {
+      var pw = prompt('New password for ' + u + ' (min 6 characters)');
+      if (!pw) return;
+      run('accountReset', { username: u, newPassword: pw }, 'Password reset for ' + u);
+    });
+  });
+};
+$('admRefresh').addEventListener('click', function () { RENDER.admin(); });
+$('admAddToken').addEventListener('click', function () {
+  modal('<h3>Issue a token</h3><p class="sh-sub">One token, one person, one browser. They redeem it once and then use their account.</p>' +
+    '<div class="field"><label>Token</label><input id="atTok" class="token" maxlength="14" placeholder="GU10ABCDE"></div>' +
+    '<div class="field"><label>Note · who is it for</label><input id="atNote" placeholder="e.g. Rachel, Y12"></div>' +
+    '<div class="err" id="atErr"></div>' +
+    '<div style="display:flex;gap:10px"><button class="btn ghost small" style="flex:1" data-x="c">Cancel</button>' +
+    '<button class="btn small" style="flex:2" data-x="s">Issue</button></div>', function (m) {
+    m.querySelector('#atTok').focus();
+    m.querySelector('[data-x=c]').onclick = closeModal;
+    m.querySelector('[data-x=s]').onclick = function () {
+      var t = m.querySelector('#atTok').value.trim().toUpperCase();
+      if (t.length < 4) { $('atErr').textContent = 'At least 4 characters.'; return; }
+      adm('tokenAdd', { token: t, note: m.querySelector('#atNote').value.trim() }).then(function (r) {
+        if (!r.ok) { $('atErr').textContent = r.error || 'Failed.'; return; }
+        closeModal(); toast('Issued ' + t); RENDER.admin();
+      });
+    };
+  });
+});
+
+/* ============================================================
+   EXPORT / RESET / SESSION
    ============================================================ */
 $('btnExport').addEventListener('click', function () {
   var blob = new Blob([JSON.stringify({
@@ -2078,21 +3464,106 @@ $('btnExport').addEventListener('click', function () {
   a.click();
 });
 $('btnWipe').addEventListener('click', function () {
-  if (!confirm('KILL SWITCH: This will PERMANENTLY delete your entire progress, including all history, notes, and profile data. Proceed?')) return;
-  if (!confirm('Are you absolutely sure? There is no way to recover this data.')) return;
+  if (!confirm('This clears everything stored in THIS browser and logs you out.\n\nYour account keeps its own copy: log back in and all of it comes straight back. Proceed?')) return;
+  if (!confirm('Clear this browser now?')) return;
+  var keepDevice = Store.get('deviceId', null);
   Store.clear();
-  // Clear any other possible storage keys just in case
   localStorage.clear();
+  if (keepDevice) Store.set('deviceId', keepDevice);   // keep the token binding intact
   location.reload();
+});
+
+$('btnSyncNow').addEventListener('click', function () {
+  if (!AUTH.sid) { toast('Not signed in — nothing to sync'); return; }
+  pushNow(function (ok) { toast(ok ? 'Synced to your account' : 'Sync failed — ' + (SYNC.lastErr || 'try again')); });
+});
+$('btnLogout').addEventListener('click', function () {
+  if (S && !confirm('A session is open. Log out anyway? Answered questions are already saved.')) return;
+  if (!confirm('Log out? Your progress stays on your account.')) return;
+  pushNow(function () { hardLogout(); toast('Logged out'); });
 });
 
 /* ============================================================
    BOOT
    ============================================================ */
+function showGate(step) {
+  $('gate').classList.remove('hidden');
+  gateStep(step || 'token');
+}
+
+/* Existing users arrive with local progress but no account. They are
+   sent straight to signup with their old token, and the local snapshot
+   is uploaded as the account's starting state — nothing is lost. */
+function beginMigration() {
+  var p = DB.profile || {};
+  $('f-name').value = p.name || '';
+  $('f-score').value = p.baseline || '';
+  $('f-date').value = p.examDate || '';
+  $('f-token').value = p.token || '';
+
+  if (!p.token) { showGate('token'); return; }
+  api('redeem', { token: p.token, deviceId: deviceId() }).then(function (r) {
+    if (r.ok && !r.hasAccount) {
+      PENDING = {
+        token: r.token, name: p.name || 'Student', baseline: p.baseline == null ? null : p.baseline,
+        examDate: p.examDate || '', migrating: true
+      };
+      var n = (DB.attempts || []).length;
+      $('signupNote').innerHTML = '<b>Accounts are now required.</b> Create one and everything already on this browser' +
+        (n ? ' (' + n + ' logged attempts, ' + (DB.sessions || []).length + ' sessions, your notes, vocab and collections)' : '') +
+        ' is uploaded to it — nothing is lost, and it becomes reachable from any browser.';
+      showGate('signup');
+      $('s-user').focus();
+    } else if (r.ok && r.hasAccount) {
+      showGate('login');
+      $('l-user').value = r.username || '';
+      $('loginErr').textContent = 'Accounts are now required. Log in to keep going.';
+    } else if (r.hasAccount) {
+      showGate('login');
+      $('l-user').value = r.username || '';
+      $('loginErr').textContent = r.error || 'Log in to keep going.';
+    } else {
+      showGate('token');
+      $('gateErr').textContent = r.error || 'Please redeem your token again.';
+    }
+  });
+}
+
 loadDB();
 loadBank().then(function () {
-  if (DB.profile) openApp();
-  else $('gate').classList.remove('hidden');
+  AUTH.sid = Store.get('sid', null);
+
+  if (AUTH.sid) {
+    // returning signed-in user: verify and reconcile against the cloud
+    return api('pull', { sid: AUTH.sid }).then(function (r) {
+      if (r.ok) {
+        AUTH.account = r.account;
+        var hadLocal = (DB.attempts && DB.attempts.length) || (DB.sessions && DB.sessions.length);
+        applySnapshot(r.data, hadLocal ? 'merge' : 'replace');
+        DB.profile = Object.assign({}, DB.profile || {}, {
+          name: r.account.name, baseline: r.account.baseline, examDate: r.account.examDate,
+          token: r.account.token, username: r.account.username, accountId: r.account.id
+        });
+        saveLocalOnly('profile');
+        setSync('saved');
+        openApp();
+        if (hadLocal) pushNow();
+      } else if (r.offline) {
+        // server unreachable — work locally, sync when it comes back
+        setSync('error', 'offline');
+        SYNC.lastErr = r.error;
+        if (DB.profile) { openApp(); toast('Working offline — changes sync when you reconnect.'); }
+        else showGate('login');
+      } else {
+        AUTH.sid = null; Store.set('sid', null);
+        showGate('login');
+        $('loginErr').textContent = r.error || 'Please log in again.';
+      }
+    });
+  }
+
+  if (DB.profile) beginMigration();   // pre-update user, no account yet
+  else showGate('token');
 });
 })();
 
