@@ -1,6 +1,6 @@
 {
   "name": "mortar-pestle-sat",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "private": true,
   "type": "module",
   "description": "DSAT Reading & Writing practice bank — static front end plus a single Vercel serverless function backed by Vercel Blob.",
@@ -8,6 +8,6 @@
     "node": ">=20"
   },
   "dependencies": {
-    "@vercel/blob": "^0.27.0"
+    "@vercel/blob": "^2.6.1"
   }
 }
