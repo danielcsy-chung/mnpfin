@@ -330,7 +330,12 @@ table.grid th.numh{text-align:right}
 .p-text .qb-figure th{background:var(--paper-dim);font-weight:600;text-align:left}
 .p-text .qb-figure th,.p-text .qb-figure td{border:1px solid var(--paper-line);padding:7px 12px;white-space:nowrap}
 .p-text .qb-figure figcaption{font-family:var(--font-mono);font-size:10.5px;color:var(--text-on-paper-soft);margin-top:7px}
-.p-text .qb-figure img{max-width:100%;height:auto;background:#fff;border:1px solid var(--paper-line);border-radius:var(--radius-s)}
+.p-text .qb-figure img{display:block;max-width:min(100%,430px);max-height:320px;width:auto;height:auto;
+  background:#fff;border:1px solid var(--paper-line);border-radius:var(--radius-s);padding:6px;
+  cursor:zoom-in;transition:max-width .18s,max-height .18s}
+.p-text .qb-figure img.zoom{max-width:100%;max-height:none;cursor:zoom-out}
+.p-text .qb-figure .zoom-hint{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--stone);margin-top:5px}
 .p-text u,.p-text .qb-passage u{text-underline-offset:3px}
 .choices{display:flex;flex-direction:column;gap:9px}
 .choice{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--paper-line);background:#fff;
@@ -692,6 +697,19 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
 .ud-stat{background:var(--paper-dim);border-radius:var(--radius-s);padding:9px 11px}
 .ud-stat .n{font-family:var(--font-mono);font-size:18px;font-weight:600}
 .ud-stat .l{font-family:var(--font-mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-on-paper-soft);margin-top:2px}
+
+/* ---------- maintenance screen ---------- */
+#maintenance{position:fixed;inset:0;z-index:600;background:var(--ink);display:flex;
+  align-items:center;justify-content:center;padding:26px;text-align:center}
+#maintenance .mt-card{max-width:430px}
+#maintenance .mt-ic{width:52px;height:52px;margin:0 auto 20px;color:var(--brass)}
+#maintenance h1{font-family:var(--font-display);font-weight:600;font-size:27px;
+  color:var(--text-on-ink);margin:0 0 12px;line-height:1.25}
+#maintenance p{font-size:14px;line-height:1.65;color:var(--text-on-ink-soft);margin:0 0 22px}
+#maintenance .mt-contact{font-family:var(--font-mono);font-size:11px;line-height:1.8;color:var(--stone);
+  border-top:1px dashed #3D4439;padding-top:16px}
+#maintenance .mt-contact a{color:var(--stone);text-decoration:none}
+#maintenance .mt-contact a:hover{color:var(--brass)}
 
 /* ---------- sync chip ---------- */
 .sync-chip{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;color:var(--stone);
@@ -1475,6 +1493,20 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
 </div>
 
 <!-- ============ MODAL ============ -->
+<div id="maintenance" class="hidden">
+  <div class="mt-card">
+    <svg class="mt-ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+      <path d="M14.7 6.3a4 4 0 0 1-5 5L4 17v3h3l5.7-5.7a4 4 0 0 0 5-5l-2.5 2.5-2.1-2.1z"/>
+    </svg>
+    <h1>Under maintenance</h1>
+    <p>The website is under maintenance. Please contact whom it may concern to resolve this issue.</p>
+    <div class="mt-contact">
+      Daniel &nbsp;<a href="tel:+6596687617">+65-9668-7617</a><br>
+      <a href="mailto:chung124911@gapps.uwcsea.edu.sg">chung124911@gapps.uwcsea.edu.sg</a>
+    </div>
+  </div>
+</div>
+
 <div id="modal" class="sheet-back hidden"><div class="sheet" id="modalBody"></div></div>
 
 <script>
@@ -1607,6 +1639,7 @@ function deviceId() {
   return d;
 }
 
+var MAINT = false;
 function api(action, payload) {
   var body = payload || {};
   body.action = action;
@@ -1619,7 +1652,24 @@ function api(action, payload) {
     return r.json().catch(function () { return { ok: false, error: 'Server returned an unreadable response.' }; });
   }).catch(function () {
     return { ok: false, error: 'Cannot reach the server. Check your connection.', offline: true };
+  }).then(function (r) {
+    if (r && r.maintenance) showMaintenance();
+    return r;
   });
+}
+
+/* Shown when the server reports maintenance. Everything else is torn down so
+   no stale screen shows through, and nothing further is synced. */
+function showMaintenance() {
+  if (MAINT) return;
+  MAINT = true;
+  try { stopTimer(); } catch (e) {}
+  clearTimeout(SYNC.timer);
+  S = null;
+  ['gate', 'app', 'practice', 'summary', 'pauseOverlay', 'modal'].forEach(function (id) {
+    var el = $(id); if (el) el.classList.add('hidden');
+  });
+  $('maintenance').classList.remove('hidden');
 }
 
 function snapshot() {
@@ -1693,6 +1743,7 @@ function setSync(state, msg) {
 }
 
 function scheduleSync() {
+  if (MAINT) return;
   if (!AUTH.sid) { setSync('offline', 'local only'); return; }
   SYNC.dirty = true;
   setSync('dirty');
@@ -1701,7 +1752,7 @@ function scheduleSync() {
 }
 
 function pushNow(cb) {
-  if (!AUTH.sid) { if (cb) cb(false); return; }
+  if (MAINT || !AUTH.sid) { if (cb) cb(false); return; }
   if (SYNC.inflight) { clearTimeout(SYNC.timer); SYNC.timer = setTimeout(function () { pushNow(cb); }, 800); return; }
   SYNC.inflight = true;
   setSync('saving');
@@ -1721,7 +1772,7 @@ function pushNow(cb) {
 
 /* flush before the tab goes away */
 window.addEventListener('beforeunload', function () {
-  if (AUTH.sid && SYNC.dirty && navigator.sendBeacon) {
+  if (!MAINT && AUTH.sid && SYNC.dirty && navigator.sendBeacon) {
     var body = JSON.stringify({ action: 'push', sid: AUTH.sid, data: snapshot() });
     try { navigator.sendBeacon(API_URL, new Blob([body], { type: 'application/json' })); } catch (e) {}
   }
@@ -2712,6 +2763,7 @@ function paintQuestion() {
 
   $('qCounter').textContent = 'Question ' + (S.i + 1) + ' of ' + S.queue.length;
   $('progFill').style.width = ((S.i) / S.queue.length * 100) + '%';
+  wireFigureZoomSoon();
   $('qMeta').innerHTML = esc(q.domain + ' · ' + q.type + ' · ' + ({ E: 'Easy', M: 'Medium', H: 'Hard' }[q.difficulty] || '')) +
     '<span class="qid" title="Question ID — paste this into Sets to file it">' + esc(q.id) + '</span>';
   $('qPassage').innerHTML = q.passage;
@@ -2772,6 +2824,28 @@ function setNote(qid, text) {
   else DB.qnotes[qid] = { text: text, ts: Date.now() };
   save('qnotes');
 }
+/* Graphs are capped so the whole plot is visible at a glance; click to open
+   one out to full width when you need to read values off it. */
+function wireFigureZoomSoon() { setTimeout(function () { wireFigureZoom($('qPassage')); }, 0); }
+function wireFigureZoom(scope) {
+  (scope || document).querySelectorAll('.qb-figure img').forEach(function (img) {
+    if (img.dataset.zoomWired) return;
+    img.dataset.zoomWired = '1';
+    img.title = 'Click to enlarge';
+    img.onclick = function () {
+      img.classList.toggle('zoom');
+      img.title = img.classList.contains('zoom') ? 'Click to shrink' : 'Click to enlarge';
+    };
+    var fig = img.closest('.qb-figure');
+    if (fig && !fig.querySelector('.zoom-hint')) {
+      var hint = document.createElement('div');
+      hint.className = 'zoom-hint';
+      hint.textContent = 'Click the graph to enlarge';
+      fig.appendChild(hint);
+    }
+  });
+}
+
 function paintNoteDot() {
   var has = S && noteFor(cur().q.id);
   $('qnoteDot').innerHTML = has ? '<span class="has-note-dot"></span>' : '';
@@ -4210,6 +4284,7 @@ RENDER.admin = function () {
       toks.filter(function (t) { return t.boundDeviceId; }).length + ' bound · ' +
       toks.filter(function (t) { return t.revoked; }).length + ' revoked';
     $('admAccSub').textContent = accs.length + ' accounts · ' +
+      accs.filter(function (a) { return a.suspended; }).length + ' suspended · ' +
       accs.filter(function (a) { return a.revoked; }).length + ' revoked';
 
     $('admTokens').innerHTML = '<table class="grid"><thead><tr><th>Token</th><th>Status</th><th>Browser</th>' +
@@ -4241,11 +4316,16 @@ RENDER.admin = function () {
         return '<tr><td class="mono"><b>' + esc(a.username) + '</b></td><td>' + esc(a.name || '—') + '</td>' +
           '<td class="num mono">' + (d.unique != null ? d.unique + '/' + totalQ() : '—') + '</td>' +
           '<td class="num mono">' + (d.attempted ? d.accuracy + '%' : '—') + '</td>' +
-          '<td>' + (a.revoked ? '<span class="badge bad">revoked</span>' : '<span class="badge">active</span>') + '</td>' +
+          '<td>' + (a.revoked ? '<span class="badge bad">revoked</span>'
+                   : a.suspended ? '<span class="badge idle" title="Sees a maintenance notice">suspended</span>'
+                   : '<span class="badge">active</span>') + '</td>' +
           '<td><div class="act-row">' +
           '<button class="btn tiny ghost" data-ai="' + esc(a.username) + '">Data</button>' +
           (master ? '<span class="muted">protected</span>' :
             '<button class="btn tiny ghost" data-an="' + esc(a.username) + '">Rename</button>' +
+            (a.suspended
+              ? '<button class="btn tiny" data-au="' + esc(a.username) + '">Unsuspend</button>'
+              : '<button class="btn tiny ghost" data-as="' + esc(a.username) + '">Suspend</button>') +
             (a.revoked
               ? '<button class="btn tiny" data-ar="' + esc(a.username) + '">Restore</button>'
               : '<button class="btn tiny danger" data-av="' + esc(a.username) + '">Revoke</button>') +
@@ -4288,6 +4368,12 @@ RENDER.admin = function () {
       run('renameUser', { username: u, newUsername: nu.trim().toLowerCase() }, 'Renamed to ' + nu.trim().toLowerCase());
     });
     wire('data-ai', function (u) { openUserDetail(u); });
+    wire('data-as', function (u) {
+      if (!confirm('Suspend ' + u + '?\n\nThey will see a generic "under maintenance" notice instead of the site. ' +
+                   'It does not tell them they have been blocked, and it is reversible at any time.')) return;
+      run('accountSuspend', { username: u }, u + ' suspended');
+    });
+    wire('data-au', function (u) { run('accountUnsuspend', { username: u }, u + ' restored'); });
   });
 };
 $('admRefresh').addEventListener('click', function () { RENDER.admin(); });
@@ -4328,7 +4414,9 @@ function openUserDetail(username) {
     modal(
       '<h3>' + esc(acc.name || username) + '</h3>' +
       '<p class="sh-sub">@' + esc(acc.username) + ' · token ' + esc(acc.token || '—') +
-      ' · joined ' + fmtDate(acc.createdAt) + (acc.examDate ? ' · exam ' + esc(acc.examDate) : '') + '</p>' +
+      ' · joined ' + fmtDate(acc.createdAt) + (acc.examDate ? ' · exam ' + esc(acc.examDate) : '') +
+      (acc.suspended ? ' · <span class="badge idle">suspended</span>' : '') +
+      (acc.revoked ? ' · <span class="badge bad">revoked</span>' : '') + '</p>' +
 
       '<div class="ud-grid">' +
       '<div class="ud-stat"><div class="n">' + (dg.unique || 0) + '</div><div class="l">of ' + totalQ() + ' seen</div></div>' +
@@ -4477,6 +4565,8 @@ loadBank().then(function () {
         setSync('saved');
         openApp();
         if (hadLocal) pushNow();
+      } else if (r.maintenance) {
+        return;                       // showMaintenance() already took over
       } else if (r.offline) {
         // server unreachable — work locally, sync when it comes back
         setSync('error', 'offline');
