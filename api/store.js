@@ -168,6 +168,48 @@ function publicAccount(acc) {
   };
 }
 
+/* ---------- global settings ---------- */
+const SETTINGS_PATH = 'cfg/settings.json';
+async function getSettings() {
+  return (await readJSON(SETTINGS_PATH)) || { leaderboard: false, updatedAt: 0 };
+}
+async function saveSettings(s) {
+  s.updatedAt = Date.now();
+  return writeJSON(SETTINGS_PATH, s);
+}
+
+/* ---------- public stats digest (feeds the leaderboard) ----------
+   A tiny derived record per account so the leaderboard never has to
+   read, or expose, anybody's full progress blob. */
+function digestOf(acc, data) {
+  const at = Array.isArray(data && data.attempts) ? data.attempts : [];
+  const correct = at.filter(a => a && a.correct).length;
+  const uniq = new Set(at.map(a => a && a.qid).filter(Boolean)).size;
+  const vocab = Array.isArray(data && data.vocab) ? data.vocab : [];
+  return {
+    accountId: acc.id,
+    username: acc.username,
+    name: acc.name || acc.username,
+    attempted: at.length,
+    unique: uniq,
+    correct,
+    accuracy: at.length ? Math.round((correct / at.length) * 100) : 0,
+    sessions: Array.isArray(data && data.sessions) ? data.sessions.length : 0,
+    vocab: vocab.length,
+    vocabPending: vocab.filter(v => v && v.pending).length,
+    qnotes: Object.keys((data && data.qnotes) || {}).length,
+    notes: Array.isArray(data && data.notes) ? data.notes.length : 0,
+    joinedAt: acc.createdAt,
+    examDate: acc.examDate || '',
+    revoked: !!acc.revoked,
+    lastActive: Date.now()
+  };
+}
+async function saveDigest(acc, data) {
+  try { await writeJSON(pathFor('st', acc.id), digestOf(acc, data)); }
+  catch (e) { /* the leaderboard is cosmetic; never fail a sync over it */ }
+}
+
 /* ---------- data snapshot ---------- */
 
 async function getData(accountId) {
@@ -335,6 +377,7 @@ export default async function handler(req, res) {
         snapshot.rev = 1;
         snapshot.savedAt = Date.now();
         await saveData(acc.id, snapshot);
+        await saveDigest(acc, snapshot);
 
         return res.status(200).json({
           ok: true,
@@ -384,6 +427,7 @@ export default async function handler(req, res) {
         data.rev = (prev.rev || 0) + 1;
         data.savedAt = Date.now();
         await saveData(r.acc.id, data);
+        await saveDigest(r.acc, data);
         return res.status(200).json({ ok: true, rev: data.rev, savedAt: data.savedAt });
       }
 
@@ -409,7 +453,30 @@ export default async function handler(req, res) {
         return res.status(200).json({ ok: true, account: publicAccount(acc) });
       }
 
-      /* -------- 7. admin (master token only) -------- */
+      /* -------- 7. leaderboard -------- */
+      case 'leaderboard': {
+        const r = await resolve(body.sid);
+        if (r.error) return res.status(r.code).json({ ok: false, error: r.error });
+        const st = await getSettings();
+        const isMaster = r.acc.token === MASTER_TOKEN;
+        if (!st.leaderboard && !isMaster) {
+          return res.status(200).json({ ok: true, enabled: false, rows: [], me: r.acc.id });
+        }
+        const rows = (await readAll('st/'))
+          .filter(x => x && !x.revoked)
+          .map(x => ({
+            accountId: x.accountId, name: x.name, username: x.username,
+            unique: x.unique || 0, attempted: x.attempted || 0,
+            correct: x.correct || 0, accuracy: x.accuracy || 0,
+            sessions: x.sessions || 0, lastActive: x.lastActive || 0
+          }));
+        return res.status(200).json({
+          ok: true, enabled: !!st.leaderboard, adminPreview: !st.leaderboard && isMaster,
+          rows, me: r.acc.id
+        });
+      }
+
+      /* -------- 8. admin (master token only) -------- */
       case 'admin': {
         const r = await resolve(body.sid);
         if (r.error) return res.status(r.code).json({ ok: false, error: r.error });
@@ -425,10 +492,15 @@ export default async function handler(req, res) {
             if (!tokens.find(x => x.token === t)) await getToken(t);
           }
           const tokens2 = await readAll('tk/');
+          const stats = await readAll('st/');
+          const byAcct = {};
+          stats.forEach(x => { if (x && x.accountId) byAcct[x.accountId] = x; });
           return res.status(200).json({
             ok: true,
+            settings: await getSettings(),
             tokens: tokens2.sort((a, b) => a.token.localeCompare(b.token)),
-            accounts: accounts.sort((a, b) => a.username.localeCompare(b.username))
+            accounts: accounts.map(a => Object.assign({}, a, { stats: byAcct[a.id] || null }))
+                              .sort((a, b) => a.username.localeCompare(b.username))
           });
         }
 
@@ -472,12 +544,58 @@ export default async function handler(req, res) {
           return res.status(200).json({ ok: true });
         }
 
+        if (op === 'setLeaderboard') {
+          const st = await getSettings();
+          st.leaderboard = !!body.on;
+          await saveSettings(st);
+          return res.status(200).json({ ok: true, settings: st });
+        }
+
+        if (op === 'renameUser') {
+          const oldU = normUser(body.username);
+          const newU = normUser(body.newUsername);
+          if (!/^[a-z0-9._-]{3,24}$/.test(newU)) {
+            return res.status(400).json({ ok: false, error: 'User ID: 3-24 characters, letters/numbers/. _ - only.' });
+          }
+          const acc = await getAccount(oldU);
+          if (!acc) return res.status(404).json({ ok: false, error: 'No such account.' });
+          if (oldU === newU) return res.status(200).json({ ok: true, unchanged: true });
+          if (await getAccount(newU)) return res.status(409).json({ ok: false, error: 'That user ID is taken.' });
+
+          // write the new record first, so a failure mid-way never loses the account
+          const moved = Object.assign({}, acc, { username: newU });
+          await saveAccount(moved);
+          await del(pathFor('ac', oldU)).catch(e => { if (!isNotFound(e)) throw e; });
+
+          const tk = await getToken(acc.token);
+          if (tk && tk.username === oldU) { tk.username = newU; await saveToken(tk); }
+
+          const data = await getData(acc.id);
+          if (data) await saveDigest(moved, data);
+
+          return res.status(200).json({ ok: true, username: newU });
+        }
+
+        if (op === 'userDetail') {
+          const acc = await getAccount(body.username);
+          if (!acc) return res.status(404).json({ ok: false, error: 'No such account.' });
+          const data = (await getData(acc.id)) || {};
+          return res.status(200).json({
+            ok: true,
+            account: publicAccount(acc),
+            digest: digestOf(acc, data),
+            data
+          });
+        }
+
         if (op === 'accountRevoke' || op === 'accountRestore') {
           const acc = await getAccount(body.username);
           if (!acc) return res.status(404).json({ ok: false, error: 'No such account.' });
           if (acc.token === MASTER_TOKEN) return res.status(400).json({ ok: false, error: 'The master account cannot be revoked.' });
           acc.revoked = (op === 'accountRevoke');
           await saveAccount(acc);
+          const d = await getData(acc.id);
+          if (d) await saveDigest(acc, d);
           return res.status(200).json({ ok: true });
         }
 
@@ -496,7 +614,7 @@ export default async function handler(req, res) {
           const acc = await getAccount(body.username);
           if (!acc) return res.status(404).json({ ok: false, error: 'No such account.' });
           if (acc.token === MASTER_TOKEN) return res.status(400).json({ ok: false, error: 'The master account cannot be deleted.' });
-          for (const p of [pathFor('ac', acc.username), pathFor('dt', acc.id)]) {
+          for (const p of [pathFor('ac', acc.username), pathFor('dt', acc.id), pathFor('st', acc.id)]) {
             await del(p).catch(e => { if (!isNotFound(e)) throw e; });
           }
           const rec = await getToken(acc.token);
