@@ -302,13 +302,36 @@ table.grid th.numh{text-align:right}
 @media (max-width:880px){.q-body{grid-template-columns:1fr;overflow:auto}}
 .pane{padding:26px 28px;overflow:auto}
 .pane.left{border-right:1px solid var(--paper-line)}
-.p-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--oxide);margin-bottom:12px}
+.p-eyebrow{font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--oxide);margin-bottom:12px;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.p-eyebrow .qid{margin-left:auto;color:var(--stone);letter-spacing:.06em;text-transform:none;
+  font-size:10px;opacity:.75;cursor:help;user-select:all}
+.p-eyebrow .qid::before{content:'ID ';opacity:.6}
 .p-text{font-family:var(--font-display);font-size:16.5px;line-height:1.72}
 .p-text img{max-width:100%;height:auto;margin:14px 0;background:#fff;border:1px solid var(--paper-line);border-radius:4px}
 .p-text table{border-collapse:collapse;margin:14px 0;font-family:var(--font-body);font-size:13px}
 .p-text table td,.p-text table th{border:1px solid var(--paper-line);padding:6px 10px}
 .p-text .blank{border-bottom:2px solid var(--stone);padding:0 22px}
-.stem{margin-top:20px;font-weight:600;font-size:14.5px;line-height:1.5;font-family:var(--font-body)}
+.stem{font-weight:600;font-size:15.5px;line-height:1.5;font-family:var(--font-body);
+  color:var(--text-on-paper);margin:0 0 16px;padding-bottom:14px;border-bottom:1px solid var(--paper-line)}
+.stem:empty{display:none}
+
+/* ---------- styling for the bank's own markup ----------
+   bank.json ships qb-passage / qb-prompt / qb-figure. These previously
+   had no rules at all, so passages inherited whatever container they
+   landed in and tables were unstyled. */
+.p-text .qb-passage{font-family:var(--font-display);font-size:16.5px;line-height:1.72;color:var(--text-on-paper)}
+.p-text .qb-passage p{margin:0 0 14px}
+.p-text .qb-passage p:last-child{margin-bottom:0}
+.p-text .qb-prompt{display:none}          /* the stem renders it on the right instead */
+.p-text .qb-figure{margin:0 0 20px;padding:0;overflow-x:auto}
+.p-text .qb-figure table{border-collapse:collapse;font-family:var(--font-body);font-size:13px;
+  background:#fff;border:1px solid var(--paper-line);border-radius:var(--radius-s);margin:0}
+.p-text .qb-figure th{background:var(--paper-dim);font-weight:600;text-align:left}
+.p-text .qb-figure th,.p-text .qb-figure td{border:1px solid var(--paper-line);padding:7px 12px;white-space:nowrap}
+.p-text .qb-figure figcaption{font-family:var(--font-mono);font-size:10.5px;color:var(--text-on-paper-soft);margin-top:7px}
+.p-text .qb-figure img{max-width:100%;height:auto;background:#fff;border:1px solid var(--paper-line);border-radius:var(--radius-s)}
+.p-text u,.p-text .qb-passage u{text-underline-offset:3px}
 .choices{display:flex;flex-direction:column;gap:9px}
 .choice{display:flex;align-items:flex-start;gap:12px;border:1px solid var(--paper-line);background:#fff;
   border-radius:var(--radius-s);padding:12px 14px;font-size:13.5px;line-height:1.5;cursor:pointer;text-align:left;width:100%}
@@ -466,9 +489,14 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
 .qnote-box .qn-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}
 .qnote-box .qn-lbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--oxide)}
-.qnote-box textarea{width:100%;border:1px solid var(--paper-line);border-radius:var(--radius-s);
-  background:#fff;padding:10px 12px;font-family:var(--font-body);font-size:13px;line-height:1.55;
-  color:var(--text-on-paper);resize:vertical;min-height:78px}
+.qnote-box textarea,.qnote-box input{width:100%;border:1px solid var(--paper-line);border-radius:var(--radius-s);
+  background:#fff!important;padding:10px 12px;font-family:var(--font-body);font-size:13px;line-height:1.55;
+  color:var(--text-on-paper)!important;resize:vertical;min-height:78px}
+.qnote-box textarea::placeholder{color:var(--stone);opacity:.85}
+/* belt and braces: any control on a paper surface stays dark-on-white */
+.sheet textarea,.sheet input,.sheet select,
+.drawer textarea,.drawer input,.pane textarea,.pane input{
+  background:#fff;color:var(--text-on-paper)}
 .qnote-read{font-size:13px;line-height:1.6;white-space:pre-wrap}
 .has-note-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--brass);margin-left:5px;vertical-align:middle}
 
@@ -522,6 +550,149 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
 .gsec kbd{font-family:var(--font-mono);font-size:11px;background:var(--ink);color:var(--paper);
   padding:2px 6px;border-radius:3px}
 
+/* ============================================================
+   v3 — launcher restyle, pace, recommendation, calendar, leaderboard
+   ============================================================ */
+
+/* ---------- launch tiles: beige, restrained accent, 3 per line ---------- */
+.launch-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:30px}
+@media (max-width:900px){.launch-grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:620px){.launch-grid{grid-template-columns:1fr}}
+.ltile{position:relative;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:9px;
+  background:var(--paper);color:var(--text-on-paper);border:1px solid var(--paper-line);
+  border-radius:var(--radius-m);padding:17px 18px 15px;transition:border-color .16s,transform .16s,box-shadow .16s}
+.ltile::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--radius-m) 0 0 var(--radius-m);
+  background:var(--brass);opacity:.55;transition:opacity .16s}
+.ltile:hover{transform:translateY(-2px);border-color:var(--brass);box-shadow:0 12px 24px -18px rgba(0,0,0,.75)}
+.ltile:hover::before{opacity:1}
+.ltile .lt-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ltile .lt-name{font-family:var(--font-display);font-weight:600;font-size:17px;line-height:1.2}
+.ltile .lt-count{font-family:var(--font-mono);font-size:11px;font-weight:600;color:var(--verdigris-dark);
+  background:var(--verdigris-tint);border-radius:12px;padding:3px 9px;white-space:nowrap}
+.ltile .lt-meta{font-size:12px;line-height:1.45;color:var(--text-on-paper-soft)}
+.ltile.wide{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;gap:16px;padding:15px 18px}
+.ltile.wide .lt-copy{display:flex;flex-direction:column;gap:3px}
+.ltile.wide::before{background:var(--verdigris)}
+@media (max-width:620px){.ltile.wide{flex-direction:column;align-items:flex-start}}
+
+/* ---------- pace tracker ---------- */
+.pace{display:flex;align-items:center;gap:16px;flex-wrap:wrap;border-radius:var(--radius-m);
+  padding:15px 18px;margin-bottom:16px;border:1px solid var(--paper-line);background:var(--paper);color:var(--text-on-paper)}
+.pace .pc-badge{font-family:var(--font-mono);font-size:11px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;padding:6px 13px;border-radius:20px;white-space:nowrap}
+.pace.behind{border-color:var(--oxide)}
+.pace.behind .pc-badge{background:var(--oxide);color:#fff}
+.pace.ontrack{border-color:var(--verdigris)}
+.pace.ontrack .pc-badge{background:var(--verdigris-dark);color:var(--paper)}
+.pace.ahead{border-color:var(--brass)}
+.pace.ahead .pc-badge{background:var(--brass);color:#2A1F0C}
+.pace .pc-body{flex:1;min-width:220px}
+.pace .pc-line{font-size:13.5px;line-height:1.5}
+.pace .pc-sub{font-family:var(--font-mono);font-size:10.5px;color:var(--text-on-paper-soft);margin-top:4px}
+.pace .pc-bar{height:6px;border-radius:3px;background:var(--paper-dim);overflow:hidden;margin-top:9px;position:relative}
+.pace .pc-bar i{display:block;height:100%;background:var(--verdigris)}
+.pace .pc-bar u{position:absolute;top:-3px;width:2px;height:12px;background:var(--oxide)}
+
+/* ---------- recommendation widget ---------- */
+.rec{display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--ink-soft);
+  border:1px solid var(--ink-line);border-left:3px solid var(--brass);
+  border-radius:var(--radius-m);padding:16px 18px;margin-bottom:16px}
+.rec .rc-ic{width:38px;height:38px;flex-shrink:0;border-radius:50%;background:var(--brass-tint);
+  color:#5F4720;display:flex;align-items:center;justify-content:center}
+.rec .rc-ic svg{width:19px;height:19px}
+.rec .rc-body{flex:1;min-width:210px}
+.rec .rc-kicker{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--brass);margin-bottom:3px}
+.rec .rc-title{font-family:var(--font-display);font-weight:600;font-size:17px;color:var(--text-on-ink)}
+.rec .rc-why{font-size:12.5px;line-height:1.45;color:var(--text-on-ink-soft);margin-top:3px}
+.rec .rc-act{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.rec select{background:var(--ink);color:var(--text-on-ink-soft);border:1px solid var(--ink-line);
+  border-radius:var(--radius-s);padding:6px 8px;font-family:var(--font-mono);font-size:10.5px}
+.rec .rc-next{font-family:var(--font-mono);font-size:10px;color:var(--stone);white-space:nowrap}
+
+/* ---------- calendar ---------- */
+.cal{border:1px solid var(--ink-line);border-radius:var(--radius-m);margin-bottom:26px;overflow:hidden}
+.cal-head{width:100%;display:flex;align-items:center;gap:14px;justify-content:space-between;
+  background:var(--ink-soft);border:none;cursor:pointer;padding:14px 18px;text-align:left;color:var(--text-on-ink)}
+.cal-head:hover{background:#323A2F}
+.cal-head.static{cursor:default}
+.cal-head.static:hover{background:var(--ink-soft)}
+.cal-head .ch-l{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.cal-head .ch-t{font-family:var(--font-display);font-weight:600;font-size:16px}
+.cal-head .ch-m{font-family:var(--font-mono);font-size:10.5px;color:var(--text-on-ink-soft)}
+.cal-head .chev{transition:transform .2s;flex-shrink:0}
+.cal-head.open .chev{transform:rotate(180deg)}
+.cal-body{padding:18px;background:var(--paper);color:var(--text-on-paper)}
+.cal-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.cal-bar .cm{font-family:var(--font-display);font-weight:600;font-size:17px;min-width:150px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.cal-dow{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-on-paper-soft);text-align:center;padding-bottom:5px}
+.cal-cell{min-height:60px;border:1px solid var(--paper-line);border-radius:var(--radius-s);
+  background:#FBF7EC;padding:5px 6px;cursor:pointer;display:flex;flex-direction:column;gap:3px;
+  font-family:var(--font-body);text-align:left;color:inherit}
+.cal-cell:hover{border-color:var(--verdigris)}
+.cal-cell.pad{background:transparent;border-color:transparent;cursor:default}
+.cal-cell.today{border-color:var(--ink);border-width:2px}
+.cal-cell.sel{background:var(--verdigris-tint);border-color:var(--verdigris-dark)}
+.cal-cell.past{opacity:.45}
+.cal-cell.exam{background:var(--oxide-tint);border-color:var(--oxide)}
+.cal-cell .cd{font-family:var(--font-mono);font-size:11px;font-weight:600}
+.cal-cell .cq{font-family:var(--font-mono);font-size:9.5px;color:var(--text-on-paper-soft);line-height:1.3}
+.cal-dots{display:flex;gap:3px;flex-wrap:wrap;margin-top:auto}
+.cal-dots i{width:6px;height:6px;border-radius:50%;display:block}
+.cal-dots i.practice{background:var(--verdigris)}
+.cal-dots i.mock{background:var(--oxide)}
+.cal-dots i.review{background:var(--brass)}
+.cal-dots i.custom{background:var(--stone)}
+.cal-dots i.done{outline:1px solid var(--ink);opacity:.35}
+.cal-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;font-family:var(--font-mono);
+  font-size:10px;color:var(--text-on-paper-soft)}
+.cal-legend span{display:inline-flex;align-items:center;gap:5px}
+.cal-legend i{width:7px;height:7px;border-radius:50%;display:inline-block}
+.cal-day{margin-top:16px;border-top:1px dashed var(--paper-line);padding-top:14px}
+.cal-day h4{font-family:var(--font-display);font-size:16px;margin:0 0 10px}
+.cal-ev{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:9px 11px;border-radius:var(--radius-s);
+  background:#FBF7EC;border:1px solid var(--paper-line);margin-bottom:7px}
+.cal-ev.done{opacity:.5}
+.cal-ev .ce-k{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
+  padding:2px 7px;border-radius:10px;background:var(--paper-dim);color:var(--text-on-paper-soft)}
+.cal-ev .ce-t{font-size:13px;flex:1;min-width:130px}
+.cal-ev .ce-a{display:flex;gap:6px;margin-left:auto}
+
+/* ---------- leaderboard ---------- */
+.lb-row{display:grid;grid-template-columns:44px 1fr 130px 90px 70px;gap:12px;align-items:center;
+  background:var(--paper);color:var(--text-on-paper);border:1px solid var(--paper-line);
+  border-radius:var(--radius-m);padding:12px 16px;margin-bottom:8px}
+.lb-row.me{border-color:var(--verdigris-dark);background:var(--verdigris-tint)}
+.lb-row .lb-rk{font-family:var(--font-mono);font-size:16px;font-weight:600;color:var(--text-on-paper-soft);text-align:center}
+.lb-row.top1 .lb-rk{color:var(--brass)}
+.lb-row .lb-nm{font-family:var(--font-display);font-weight:600;font-size:15px}
+.lb-row .lb-un{font-family:var(--font-mono);font-size:10px;color:var(--text-on-paper-soft)}
+.lb-row .lb-pg{font-family:var(--font-mono);font-size:11px}
+.lb-row .lb-bar{height:5px;border-radius:3px;background:var(--paper-dim);overflow:hidden;margin-top:4px}
+.lb-row .lb-bar i{display:block;height:100%;background:var(--verdigris)}
+.lb-row .lb-ac{font-family:var(--font-mono);font-size:15px;font-weight:600;text-align:right}
+.lb-row .lb-ss{font-family:var(--font-mono);font-size:10.5px;color:var(--text-on-paper-soft);text-align:right}
+.lb-head{display:grid;grid-template-columns:44px 1fr 130px 90px 70px;gap:12px;padding:0 16px 8px;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--stone)}
+@media (max-width:760px){
+  .lb-row,.lb-head{grid-template-columns:34px 1fr 74px}
+  .lb-row .lb-pg,.lb-head span:nth-child(3),.lb-row .lb-ss{display:none}
+}
+
+/* ---------- admin extras ---------- */
+.tog{display:inline-flex;align-items:center;gap:9px;cursor:pointer;font-family:var(--font-mono);font-size:11px}
+.tog .sw{width:38px;height:21px;border-radius:12px;background:var(--ink-line);position:relative;transition:background .18s}
+.tog .sw::after{content:'';position:absolute;top:3px;left:3px;width:15px;height:15px;border-radius:50%;
+  background:var(--text-on-ink-soft);transition:transform .18s,background .18s}
+.tog.on .sw{background:var(--verdigris)}
+.tog.on .sw::after{transform:translateX(17px);background:#fff}
+.ud-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(96px,1fr));gap:9px;margin-bottom:16px}
+.ud-stat{background:var(--paper-dim);border-radius:var(--radius-s);padding:9px 11px}
+.ud-stat .n{font-family:var(--font-mono);font-size:18px;font-weight:600}
+.ud-stat .l{font-family:var(--font-mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;color:var(--text-on-paper-soft);margin-top:2px}
+
 /* ---------- sync chip ---------- */
 .sync-chip{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;color:var(--stone);
   border:1px solid #3D4439;border-radius:20px;padding:5px 10px;white-space:nowrap}
@@ -564,7 +735,7 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       </div>
       <div class="err" id="gateErr"></div>
       <button class="btn full" id="gateBtn">Redeem token</button>
-      <p class="gate-foot">One token, one browser, once. Your account is what makes it portable.</p>
+      <p class="gate-foot">One token, one browser, once. Your account makes it portable.</p>
       <div class="gate-switch"><button class="link-btn" id="toLogin">I already have an account →</button></div>
     </div>
 
@@ -625,7 +796,9 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <button data-page="analytics">Analytics</button>
       <button data-page="history">History</button>
       <button data-page="sets">Sets</button>
+      <button data-page="calendar">Calendar</button>
       <button data-page="toolbox">Toolbox</button>
+      <button data-page="leaderboard" id="tabLeaderboard" class="hidden">Leaderboard</button>
       <button data-page="admin" id="tabAdmin" class="hidden">Admin</button>
       <button data-page="guide">Guide</button>
     </div>
@@ -655,10 +828,14 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
         </div>
       </div>
 
+      <div id="paceSlot"></div>
+      <div id="recSlot"></div>
+
+
       <div class="sec-head">
         <div>
           <h2 class="sec">Begin practice</h2>
-          <p class="sec-sub">Pick a mode. The interface is the real thing — same layout, same keys.</p>
+          <p class="sec-sub">Same layout and keys as the real thing.</p>
         </div>
       </div>
 
@@ -667,44 +844,44 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
           <div class="mc-top"><span class="mc-name">Timed</span>
             <svg class="mc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
           </div>
-          <div class="mc-desc">Clock runs, no feedback until the end. Pacing gets logged per question type.</div>
+          <div class="mc-desc">Clock runs, feedback at the end. Pace logged per type.</div>
           <div class="mc-tag">Test conditions · 1:11 / question</div>
         </button>
         <button class="mode-card" data-mode-opts="untimed">
           <div class="mc-top"><span class="mc-name">Untimed</span>
             <svg class="mc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
           </div>
-          <div class="mc-desc">Immediate feedback after every submit. Explanation opens inline, flag the reason on the spot.</div>
-          <div class="mc-tag">Learning pass · no clock shown</div>
+          <div class="mc-desc">Feedback on every submit, explanation inline.</div>
+          <div class="mc-tag">Learning pass · no clock</div>
         </button>
         <button class="mode-card" data-mode-opts="openbook">
           <div class="mc-top"><span class="mc-name">Open book</span>
             <svg class="mc-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h7a2 2 0 0 1 2 2v12a2 2 0 0 0-2-2H3z"/><path d="M21 5h-7a2 2 0 0 0-2 2v12a2 2 0 0 1 2-2h7z"/></svg>
           </div>
-          <div class="mc-desc">Untimed, plus your own notes recalled beside the question — general and by question type.</div>
-          <div class="mc-tag">Toolbox on tap · builds the note habit</div>
+          <div class="mc-desc">Untimed, with your own notes beside the question.</div>
+          <div class="mc-tag">Toolbox on tap</div>
         </button>
       </div>
 
-      <div class="launch-row">
-        <button class="launch" id="btnMockTest">
-          <span><span class="l-name">Mock Test</span><span class="l-meta">Full SAT-style: 2 modules, 27q each, 32 min</span></span>
-          <span class="l-count">54</span>
+      <div class="launch-grid">
+        <button class="ltile" id="btnMockTest">
+          <div class="lt-top"><span class="lt-name">Mock Test</span><span class="lt-count">54q</span></div>
+          <div class="lt-meta">2 modules, 27 each, 32 min apiece.</div>
         </button>
-        <button class="launch" id="btnCategory">
-          <span><span class="l-name">Category practice</span><span class="l-meta">Pick from the 13 question types</span></span>
-          <span class="l-count">13</span>
+        <button class="ltile" id="btnCategory">
+          <div class="lt-top"><span class="lt-name">Category practice</span><span class="lt-count">13</span></div>
+          <div class="lt-meta">Drill one or more question types.</div>
         </button>
-        <button class="launch" id="btnFlagged">
-          <span><span class="l-name">Flagged questions</span><span class="l-meta">Everything you marked, oldest first</span></span>
-          <span class="l-count" id="cntFlagged">0</span>
+        <button class="ltile" id="btnFlagged">
+          <div class="lt-top"><span class="lt-name">Flagged</span><span class="lt-count" id="cntFlagged">0</span></div>
+          <div class="lt-meta">Everything you marked, oldest first.</div>
         </button>
-      </div>
-
-      <div class="launch-row">
-        <button class="launch" id="btnTargeted">
-          <span><span class="l-name">Targeted practice</span><span class="l-meta">Redemption &amp; similar questions</span></span>
-          <span class="l-count" id="cntRedemption">0</span>
+        <button class="ltile wide" id="btnTargeted">
+          <span class="lt-copy">
+            <span class="lt-name">Targeted practice</span>
+            <span class="lt-meta">Your Redemption queue, saved collections, and unseen questions matching what you keep missing.</span>
+          </span>
+          <span class="lt-count" id="cntRedemption">0</span>
         </button>
       </div>
 
@@ -742,7 +919,7 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <div class="stat-strip" id="anStats"></div>
 
       <h2 class="sec">L10 trend · per question type</h2>
-      <p class="sec-sub">Each line is that type's own rolling last-10 accuracy, plotted against how many of that type you've attempted. Toggle types on and off.</p>
+      <p class="sec-sub">Each type's own rolling last-10, plotted against attempts of that type.</p>
       <div class="card" style="margin-bottom:30px">
         <div class="tt-actions">
           <button class="btn tiny ghost" id="ttAll">Show all</button>
@@ -790,7 +967,7 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
         <input id="addIdInput" type="text" placeholder="Question ID e.g. f1bfbed3" autocomplete="off">
         <select id="addIdColl" style="border:1px solid var(--paper-line);background:#fff;border-radius:4px;padding:9px 11px;font-family:var(--font-body);font-size:12.5px;color:var(--text-on-paper)"></select>
         <button class="btn small" id="addIdBtn">Add to collection</button>
-        <span class="hint" id="addIdHint">Paste any ID from History, Error logs or a set — it drops straight in.</span>
+        <span class="hint" id="addIdHint">Paste any question ID — it drops straight in.</span>
       </div>
       <div class="set-grid" id="setGrid"></div>
       <div style="margin-top:26px;" id="setDetail"></div>
@@ -826,7 +1003,7 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       </div>
 
       <div id="tool-qnotes" class="tool-panel">
-        <p class="sec-sub">One note per question — strategy, the trap you fell for, the rule you keep forgetting. These follow your account and reappear on the question itself and in every review screen.</p>
+        <p class="sec-sub">One note per question. Follows your account, reappears on the question and in every review screen.</p>
         <div class="compose" style="background:var(--paper);border:1px solid var(--paper-line);border-radius:var(--radius-m);padding:16px;margin-bottom:18px">
           <input id="qnLookupId" type="text" placeholder="Question ID" style="width:200px;font-family:var(--font-mono)">
           <button class="btn small" id="qnLookupBtn">Open note</button>
@@ -876,15 +1053,68 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
     </div>
   </section>
 
+  <!-- CALENDAR -->
+  <section id="page-calendar" class="page">
+    <div class="inner">
+      <div class="eyebrow">Calendar</div>
+      <h1 class="page-title">The plan that reaches the exam.</h1>
+      <p class="page-dek">Build spreads every question you have not yet seen across the days you have left, reserves the final three days for reviewing mistakes, and drops a mock in every fortnight. Click a day to edit it.</p>
+      <div id="calPace"></div>
+
+      <div class="cal" id="calWrap">
+        <div class="cal-head static">
+          <span class="ch-l">
+            <span class="ch-t">Study calendar</span>
+            <span class="ch-m" id="calSummary">—</span>
+          </span>
+        </div>
+        <div class="cal-body" id="calBody">
+          <div class="cal-bar">
+            <button class="btn tiny ghost" id="calPrev">‹</button>
+            <span class="cm" id="calMonth">—</span>
+            <button class="btn tiny ghost" id="calNext">›</button>
+            <span style="flex:1"></span>
+            <button class="btn tiny" id="calBuild">Build plan</button>
+            <button class="btn tiny ghost" id="calClear">Clear</button>
+          </div>
+          <div class="cal-grid" id="calDow"></div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-legend">
+            <span><i style="background:var(--verdigris)"></i>Practice</span>
+            <span><i style="background:var(--oxide)"></i>Mock</span>
+            <span><i style="background:var(--brass)"></i>Review</span>
+            <span><i style="background:var(--stone)"></i>Custom</span>
+          </div>
+          <div class="cal-day" id="calDay"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LEADERBOARD -->
+  <section id="page-leaderboard" class="page">
+    <div class="inner">
+      <div class="eyebrow">Leaderboard</div>
+      <h1 class="page-title">Where you stand.</h1>
+      <p class="page-dek" id="lbDek">Progress and accuracy across everyone with access.</p>
+      <div class="act-row" style="margin-bottom:20px">
+        <button class="btn small" id="lbRefresh">Refresh</button>
+        <button class="btn small ghost-dark" id="lbSortToggle">Sort: progress</button>
+      </div>
+      <div id="lbBody"></div>
+    </div>
+  </section>
+
   <!-- ADMIN -->
   <section id="page-admin" class="page">
     <div class="inner">
       <div class="eyebrow">Administration</div>
       <h1 class="page-title">Who gets in.</h1>
       <p class="page-dek">Master key only. Issue tokens, revoke them, unbind a browser, or cut an account off entirely. Revoking takes effect on that person's next request — refresh, sync, login, anything.</p>
-      <div class="act-row" style="margin-bottom:22px">
+      <div class="act-row" style="margin-bottom:22px;align-items:center">
         <button class="btn small" id="admRefresh">Refresh</button>
         <button class="btn small ghost-dark" id="admAddToken">+ Issue token</button>
+        <button class="tog" id="admLbTog" style="margin-left:8px"><span class="sw"></span><span id="admLbLbl">Leaderboard off</span></button>
       </div>
       <div class="adm-grid">
         <div>
@@ -911,6 +1141,10 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
       <div class="guide-toc">
         <a href="#g-access">Access &amp; accounts</a>
         <a href="#g-dash">Dashboard</a>
+        <a href="#g-pace">Pace</a>
+        <a href="#g-rec">What to do next</a>
+        <a href="#g-cal">Calendar</a>
+        <a href="#g-lb">Leaderboard</a>
         <a href="#g-modes">Practice modes</a>
         <a href="#g-quick">Quick Practice</a>
         <a href="#g-pause">Pause &amp; resume</a>
@@ -942,11 +1176,52 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
           <li><b>D-n days.</b> The big number is a plain countdown to your exam date. No ring, no percentage, nothing to interpret — <kbd>D-42</kbd> means forty-two days left. After the date it flips to <kbd>D+n</kbd> in red.</li>
           <li><b>Bank bar.</b> How much of the question bank you have touched at least once.</li>
           <li><b>Pills.</b> Attempted count, sessions run, size of the Redemption queue, overall accuracy.</li>
-          <li><b>Where you stand.</b> Three cards: your accuracy windows, an L10 sparkline by session, and your three weakest types by L50 with a one-click button to go grind the worst one.</li>
+          <li><b>Where you stand.</b> Accuracy windows, an L10 sparkline by session, and your three weakest types with a button to go grind the worst one.</li>
+          <li><b>Pace badge, next-task strip, calendar.</b> Covered in the three sections below.</li>
           <li><b>Resume bar.</b> If a paused session exists it appears above everything else in brass. It does not expire.</li>
         </ul>
         <div class="how"><b>How to use it well</b>
         Look at one thing: is L10 above or below OVR? Above means the recent work is landing. Below means you are getting worse, or you have moved into harder material — check the per-type table in Analytics before you panic.</div>
+      </div>
+
+      <div class="gsec" id="g-pace">
+        <p class="gsub">02b · Pace</p>
+        <h3>Behind, on track, or ahead</h3>
+        <p>The bank holds <b>607</b> questions. Your daily target is 607 divided by your runway with 10% held back, so finishing early is the design, not luck.</p>
+        <p><b>Par</b> is that daily target multiplied by the days you have been on the platform. The badge compares your unique questions done against par:</p>
+        <ul>
+          <li><b>Behind</b> — par + 3 or less</li>
+          <li><b>On track</b> — par + 4 to par + 10</li>
+          <li><b>Ahead</b> — more than par + 10</li>
+        </ul>
+        <p>Sitting exactly at par counts as behind. That is deliberate: par with no cushion means one bad week sinks you.</p>
+        <div class="how"><b>Reading the bar</b>
+        The green fill is what you have done; the red tick is par. Keep the fill to the right of the tick.</div>
+      </div>
+
+      <div class="gsec" id="g-rec">
+        <p class="gsub">02c · What to do next</p>
+        <h3>The rotating prompt</h3>
+        <p>The brass strip picks one task from what your data says is most useful right now — clearing Redemption, drilling your weakest type, sitting a mock, defining queued words, or catching up if you are behind. Press the button and it starts.</p>
+        <p>It rotates on a fixed clock, not on reload, so it behaves like a schedule rather than a slot machine. Set the interval with the dropdown: <b>1h</b> keeps it responsive, <b>4h</b> or <b>8h</b> gives each suggestion time to actually be done, <b>every day</b> is closest to how spaced practice is usually structured.</p>
+        <div class="how"><b>Suggested setting</b>
+        4h if you study in blocks. 1h if you dip in and out through the day.</div>
+      </div>
+
+      <div class="gsec" id="g-cal">
+        <p class="gsub">02d · Calendar</p>
+        <h3>A plan that reaches the exam</h3>
+        <p>Its own tab in the top bar. <b>Build plan</b> spreads every question you have not yet seen across the days to your exam, reserving the <b>final 3 days for reviewing mistakes only</b>, and drops a Mock Test in every fortnight plus one a week out. A pace strip at the top tells you the daily rate needed from today.</p>
+        <p>Click a day to see its plan. Each item has <b>Start</b> (launches that session at that length), <b>Done</b>, and a delete. Add your own items with the box underneath. Rebuilding keeps anything you added by hand and anything already ticked.</p>
+        <div class="how"><b>How to use it well</b>
+        Rebuild after a week off. The per-day count recalculates from what is actually left, so the plan tightens honestly instead of pretending you are still on the original schedule.</div>
+      </div>
+
+      <div class="gsec" id="g-lb">
+        <p class="gsub">02e · Leaderboard</p>
+        <h3>Everyone with access, ranked</h3>
+        <p>Only visible when the administrator switches it on. It shows questions seen out of 607 and overall accuracy, sorted by either. Your own row is highlighted.</p>
+        <p>Only those two numbers plus session count are shared — never your notes, answers, vocab, or which questions you missed.</p>
       </div>
 
       <div class="gsec" id="g-modes">
@@ -992,6 +1267,8 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
           <li><b>Note</b> (<kbd>N</kbd>) — your private note on this exact question. A brass dot on the button means a note already exists.</li>
           <li><b>Notes</b> — toggles the Open book panel.</li>
         </ul>
+        <p>The passage sits on the left; the question and its choices sit on the right, with the question in bold above the options. The <b>question ID</b> is printed faintly at the top right of the passage — click to select it, then paste it into Sets to file the question into a collection later.</p>
+
         <p><b>Keyboard:</b> <kbd>A</kbd>–<kbd>D</kbd> or <kbd>1</kbd>–<kbd>4</kbd> to select, <kbd>Alt</kbd>+letter to strike out, <kbd>Enter</kbd> to submit then advance, <kbd>Esc</kbd> to exit.</p>
       </div>
 
@@ -1129,9 +1406,9 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
     <div class="pane left">
       <div class="p-eyebrow" id="qMeta"></div>
       <div class="p-text" id="qPassage"></div>
-      <div class="stem" id="qStem"></div>
     </div>
     <div class="pane">
+      <div class="stem" id="qStem"></div>
       <div class="choices-head">
         <button class="elim-toggle" id="elimToggle" title="Turn answer elimination on or off">
           <span class="abc">ABC</span> Eliminate
@@ -1184,7 +1461,7 @@ footer.foot button{background:none;border:none;color:var(--brass);font-family:in
 <div id="pauseOverlay" class="hidden">
   <div class="pause-card">
     <h3>Session paused</h3>
-    <p id="pauseMeta">Saved to your account. Pick it up on any browser.</p>
+    <p id="pauseMeta">Saved to your account. Resume on any browser.</p>
     <div class="pc-btns">
       <button class="btn" id="pauseResume">Resume now</button>
       <button class="btn ghost" id="pauseLeave">Leave it for later</button>
@@ -1289,10 +1566,13 @@ var DB = {
   notes: [],
   vocab: [],
   qnotes: {},        // qid -> {text, ts}  · your own annotation per question
-  paused: null       // serialised in-flight session, resumable anywhere
+  paused: null,      // serialised in-flight session, resumable anywhere
+  calendar: null,    // {events:[...], builtAt}
+  prefs: null        // {recHours, calOpen, lbSort}
 };
 
-var SYNC_KEYS = ['profile', 'attempts', 'sessions', 'collections', 'notes', 'vocab', 'qnotes', 'paused'];
+var SYNC_KEYS = ['profile', 'attempts', 'sessions', 'collections', 'notes', 'vocab', 'qnotes', 'paused', 'calendar', 'prefs'];
+var DEFAULT_PREFS = { recHours: 1, calOpen: false, lbSort: 'progress' };
 
 function loadDB() {
   DB.profile     = Store.get('profile', null);
@@ -1303,6 +1583,8 @@ function loadDB() {
   DB.vocab       = Store.get('vocab', []);
   DB.qnotes      = Store.get('qnotes', {}) || {};
   DB.paused      = Store.get('paused', null);
+  DB.calendar    = Store.get('calendar', null) || { events: [], builtAt: 0 };
+  DB.prefs       = Object.assign({}, DEFAULT_PREFS, Store.get('prefs', null) || {});
 }
 function seedCollections() {
   var c = [{ id: 'redemption', name: 'Redemption', builtin: true, qids: [], createdAt: Date.now() }];
@@ -1382,11 +1664,19 @@ function applySnapshot(remote, mode) {
     DB.qnotes = qn;
 
     if (!DB.paused && remote.paused) DB.paused = remote.paused;
+    if (remote.calendar && remote.calendar.events) {
+      var have = {}; (DB.calendar.events || []).forEach(function (e) { have[e.id] = 1; });
+      remote.calendar.events.forEach(function (e) { if (e && !have[e.id]) DB.calendar.events.push(e); });
+      DB.calendar.builtAt = Math.max(DB.calendar.builtAt || 0, remote.calendar.builtAt || 0);
+    }
+    DB.prefs = Object.assign({}, DEFAULT_PREFS, remote.prefs || {}, DB.prefs || {});
     if (remote.profile) DB.profile = Object.assign({}, remote.profile, DB.profile || {});
   } else {
     SYNC_KEYS.forEach(function (k) { if (remote[k] !== undefined) DB[k] = remote[k]; });
     if (!DB.collections || !DB.collections.length) DB.collections = seedCollections();
     if (!DB.qnotes) DB.qnotes = {};
+    if (!DB.calendar || !DB.calendar.events) DB.calendar = { events: [], builtAt: 0 };
+    DB.prefs = Object.assign({}, DEFAULT_PREFS, DB.prefs || {});
   }
   // attempts drive every rolling window — keep them in true chronological order
   DB.attempts.sort(function (a, b) { return (a.ts || 0) - (b.ts || 0); });
@@ -1484,16 +1774,83 @@ function normDifficulty(d) {
   return 'M';
 }
 
+/* QuestionHTML is a complete render: figure + passage + prompt.
+   Split it so the prompt can live beside the choices and the figure is
+   never emitted twice. Appending TableHTML/FigureHTML on top of it was
+   duplicating both the table and the question stem. */
+/* Pull the trailing question sentence out of a blob of text.
+   Scans right-to-left and only accepts an opener that is capitalised where it
+   appears, so mid-sentence words ("...where I abide", "...which choice") are
+   never mistaken for the start of the question. */
+function extractQuestionSentence(text) {
+  if (!text) return null;
+  var rx = /(?:Which|What|As used|According to|Based on|The student|Taken together|The author|In the text|Where|Why|How)\b/g;
+  var starts = [], m;
+  while ((m = rx.exec(text)) !== null) {
+    if (/[A-Z]/.test(m[0][0])) starts.push(m.index);   // capitalised only
+  }
+  for (var i = starts.length - 1; i >= 0; i--) {
+    var cand = text.slice(starts[i]).trim();
+    if (/^[^.?!]*\?$/.test(cand)) {
+      return { lead: text.slice(0, starts[i]).trim(), question: cand };
+    }
+  }
+  return null;
+}
+
+function splitQuestionHTML(row) {
+  var raw = String(row.QuestionHTML || '');
+  var figRx = /<figure class="qb-figure">[\s\S]*?<\/figure>/gi;
+  var promptRx = /<p class="qb-prompt">([\s\S]*?)<\/p>/gi;
+
+  var figure = (raw.match(figRx) || []).join('');
+  raw = raw.replace(figRx, '');
+
+  var prompts = [];
+  raw.replace(promptRx, function (_m, inner) { prompts.push(inner); return ''; });
+  raw = raw.replace(promptRx, '');
+
+  var body = raw.trim();
+  var prompt = prompts.length ? prompts[prompts.length - 1].replace(/<[^>]*>/g, '').trim() : '';
+
+  if (!prompt) prompt = String(row.PromptText || row.QuestionText || '').trim();
+  if (!prompt) {
+    // a handful of rows carry no prompt element and no PromptText — the question
+    // is the final sentence of the passage itself. Lift it out so the right-hand
+    // pane is never blank and the passage does not end mid-question.
+    var tail = extractQuestionSentence(body.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim());
+    if (tail) {
+      prompt = tail.question;
+      var ti = body.lastIndexOf(tail.question);
+      if (ti > -1) body = body.slice(0, ti) + body.slice(ti + tail.question.length);
+    }
+  }
+  // A few rows bundle trailing passage text into the prompt element. Keep only
+  // the question sentence in the stem and give the rest back to the passage.
+  if (prompt.length > 150) {
+    var split = extractQuestionSentence(prompt);
+    if (split && split.lead) {
+      body += '<div class="qb-passage">' + esc(split.lead) + '</div>';
+      prompt = split.question;
+    }
+  }
+
+  if (!body) body = '<div class="qb-passage">' + esc(row.PassageText || '') + '</div>';
+  if (!figure) {
+    if (row.FigureHTML) figure = row.FigureHTML;
+    else if (row.TableHTML) figure = '<figure class="qb-figure">' + row.TableHTML + '</figure>';
+  }
+  return { figure: figure, body: body, prompt: prompt };
+}
+
 function normalise(row) {
   var type = normaliseType(row);
-  var passage = row.QuestionHTML || row.FigureHTML || '';
-  if (!passage) passage = '<p>' + esc(row.PassageText || '') + '</p>';
-  else if (row.TableHTML) passage += row.TableHTML;
+  var parts = splitQuestionHTML(row);
   return {
     id: row.QuestionID || row.id || uid('q'),
-    passage: passage,
+    passage: parts.figure + parts.body,
     plain: row.PassageText || '',
-    prompt: row.PromptText || row.QuestionText || '',
+    prompt: parts.prompt,
     choices: [row.OptionA, row.OptionB, row.OptionC, row.OptionD].map(function (c) { return c == null ? '' : String(c); }),
     answer: LETTERS.indexOf(String(row.CorrectAnswer || 'A').trim().toUpperCase()[0]),
     difficulty: normDifficulty(row.Difficulty),
@@ -1647,6 +2004,7 @@ $('modal').addEventListener('click', function (e) { if (e.target === this) close
    Every rule here is enforced server-side; the client only asks.
    ============================================================ */
 var PENDING = null;   // {token, name, baseline, examDate, migrating}
+var LB_CACHE = null;
 
 function gateStep(step) {
   ['token', 'signup', 'login'].forEach(function (s) {
@@ -1668,6 +2026,17 @@ function openApp() {
   $('app').classList.remove('hidden');
   paintChrome();
   renderAll();
+  refreshLeaderboardTab();
+}
+
+/* the tab only exists if the admin has switched the board on */
+function refreshLeaderboardTab() {
+  if (!AUTH.sid) { $('tabLeaderboard').classList.add('hidden'); return; }
+  api('leaderboard', { sid: AUTH.sid }).then(function (r) {
+    if (!r || !r.ok) return;
+    LB_CACHE = r;
+    $('tabLeaderboard').classList.toggle('hidden', !(r.enabled || r.adminPreview));
+  });
 }
 function paintChrome() {
   var p = DB.profile || {};
@@ -1676,6 +2045,7 @@ function paintChrome() {
   $('ddayChip').textContent = d == null ? 'no date set' : (d >= 0 ? 'D-' + d : 'test passed');
   var master = !!(AUTH.account && AUTH.account.isMaster);
   $('tabAdmin').classList.toggle('hidden', !master);
+  if (master) $('tabLeaderboard').classList.remove('hidden');
   setSync(AUTH.sid ? (SYNC.dirty ? 'dirty' : SYNC.state === 'error' ? 'error' : 'saved') : 'offline');
 }
 function daysOut() {
@@ -1686,16 +2056,33 @@ function daysOut() {
   return Math.round((t - now) / 86400000);
 }
 
+/* Server fields win only when they actually hold a value — an account
+   created without an exam date must not erase the one set locally. */
+function mergeProfileFromAccount(acc) {
+  var p = DB.profile || {};
+  DB.profile = Object.assign({}, p, {
+    name: acc.name || p.name,
+    baseline: (acc.baseline != null && acc.baseline !== '') ? acc.baseline : p.baseline,
+    examDate: acc.examDate || p.examDate || '',
+    token: acc.token || p.token,
+    username: acc.username || p.username,
+    accountId: acc.id || p.accountId,
+    createdAt: p.createdAt || acc.createdAt || Date.now()
+  });
+  saveLocalOnly('profile');
+  // if the cloud copy was missing a date we hold locally, push it back up
+  if (AUTH.sid && DB.profile.examDate && !acc.examDate) {
+    api('profile', { sid: AUTH.sid, name: DB.profile.name, baseline: DB.profile.baseline, examDate: DB.profile.examDate })
+      .then(function (x) { if (x && x.ok) AUTH.account = x.account; });
+  }
+}
+
 function adoptAccount(r, mergeMode) {
   AUTH.sid = r.sid || AUTH.sid;
   AUTH.account = r.account;
   Store.set('sid', AUTH.sid);
   applySnapshot(r.data, mergeMode || 'replace');
-  DB.profile = Object.assign({}, DB.profile || {}, {
-    name: r.account.name, baseline: r.account.baseline, examDate: r.account.examDate,
-    token: r.account.token, username: r.account.username, accountId: r.account.id
-  });
-  saveLocalOnly('profile');
+  mergeProfileFromAccount(r.account);
   setSync('saved');
 }
 
@@ -1891,6 +2278,9 @@ RENDER.dashboard = function () {
 
   // paused session
   paintResumeBar();
+  renderPace();
+  renderRec();
+  renderCalHead();
 
   $('cntFlagged').textContent = flaggedIds().length;
   $('cntRedemption').textContent = missedIds().length;
@@ -2322,7 +2712,8 @@ function paintQuestion() {
 
   $('qCounter').textContent = 'Question ' + (S.i + 1) + ' of ' + S.queue.length;
   $('progFill').style.width = ((S.i) / S.queue.length * 100) + '%';
-  $('qMeta').textContent = q.domain + ' · ' + q.type + ' · ' + { E: 'Easy', M: 'Medium', H: 'Hard' }[q.difficulty];
+  $('qMeta').innerHTML = esc(q.domain + ' · ' + q.type + ' · ' + ({ E: 'Easy', M: 'Medium', H: 'Hard' }[q.difficulty] || '')) +
+    '<span class="qid" title="Question ID — paste this into Sets to file it">' + esc(q.id) + '</span>';
   $('qPassage').innerHTML = q.passage;
   if (q.image && !/<img/i.test(q.passage)) {
     $('qPassage').innerHTML += '<img src="' + esc(q.image) + '" alt="">';
@@ -2969,6 +3360,401 @@ RENDER.analytics = function () {
 };
 
 /* ============================================================
+   PACE  ·  are you on schedule to finish the bank?
+   ------------------------------------------------------------
+   daily target = totalQ / (daysToExam - 10% buffer)
+   par          = daily target x days on the platform
+   behind: <= par+3 · on track: par+4..par+10 · ahead: > par+10
+   ============================================================ */
+var REVIEW_DAYS = 3;          // final days reserved for reviewing mistakes
+var PACE_BUFFER = 0.10;       // 10% of the runway held back
+
+function dayStart(d) { var x = new Date(d); x.setHours(0, 0, 0, 0); return x; }
+function dayKey(d) {
+  var x = new Date(d);
+  return x.getFullYear() + '-' + String(x.getMonth() + 1).padStart(2, '0') + '-' + String(x.getDate()).padStart(2, '0');
+}
+function parseKey(k) { return new Date(k + 'T00:00:00'); }
+function daysBetween(a, b) { return Math.round((dayStart(b) - dayStart(a)) / 864e5); }
+
+function uniqueDone() {
+  var seen = {}, n = 0;
+  DB.attempts.forEach(function (a) { if (a && a.qid && !seen[a.qid]) { seen[a.qid] = 1; n++; } });
+  return n;
+}
+function totalQ() { return BANK.length || 607; }
+
+function paceState() {
+  var p = DB.profile || {};
+  if (!p.examDate) return null;
+  var today = dayStart(new Date());
+  var exam = dayStart(parseKey(p.examDate));
+  var joined = dayStart(new Date(p.createdAt || Date.now()));
+  if (joined > today) joined = today;
+
+  var runway = daysBetween(joined, exam);          // total days from joining to exam
+  if (runway < 1) runway = 1;
+  var effective = Math.max(1, runway * (1 - PACE_BUFFER));
+  var daily = totalQ() / effective;
+
+  var daysOn = daysBetween(joined, today) + 1;     // joining day counts as day 1
+  var par = Math.round(daily * Math.min(daysOn, effective));
+  var done = uniqueDone();
+  var delta = done - par;
+
+  var status = delta > 10 ? 'ahead' : (delta >= 4 ? 'ontrack' : 'behind');
+  var daysLeft = daysBetween(today, exam);
+  var remaining = Math.max(0, totalQ() - done);
+  var workDays = Math.max(1, daysLeft - REVIEW_DAYS);
+
+  return {
+    status: status, done: done, par: par, delta: delta,
+    daily: Math.max(1, Math.ceil(daily)),
+    needNow: Math.ceil(remaining / workDays),
+    daysOn: daysOn, daysLeft: daysLeft, remaining: remaining, total: totalQ()
+  };
+}
+
+function renderPace() {
+  var slot = $('paceSlot');
+  if (!slot) return;
+  var s = paceState();
+  if (!s) {
+    slot.innerHTML = '<div class="pace"><span class="pc-badge" style="background:var(--paper-dim);color:var(--text-on-paper-soft)">No date</span>' +
+      '<div class="pc-body"><div class="pc-line">Set an exam date to switch pace tracking on.</div></div></div>';
+    return;
+  }
+  var label = { behind: 'Behind', ontrack: 'On track', ahead: 'Ahead' }[s.status];
+  var line;
+  if (s.status === 'ahead') {
+    line = '<b>' + s.done + '</b> of ' + s.total + ' done — ' + s.delta + ' ahead of par. Great job, keep it there.';
+  } else if (s.status === 'ontrack') {
+    line = '<b>' + s.done + '</b> of ' + s.total + ' done, ' + s.delta + ' above par. Hold this rhythm.';
+  } else {
+    var gap = Math.max(0, 4 - s.delta);
+    line = '<b>' + s.done + '</b> of ' + s.total + ' done. Par is ' + s.par +
+      ' — ' + gap + ' more put' + (gap === 1 ? 's' : '') + ' you back on track.';
+  }
+  var donePct = Math.min(100, (s.done / s.total) * 100);
+  var parPct = Math.min(100, (s.par / s.total) * 100);
+  slot.innerHTML =
+    '<div class="pace ' + s.status + '"><span class="pc-badge">' + label + '</span>' +
+    '<div class="pc-body"><div class="pc-line">' + line + '</div>' +
+    '<div class="pc-bar"><i style="width:' + donePct.toFixed(1) + '%"></i><u style="left:' + parPct.toFixed(1) + '%"></u></div>' +
+    '<div class="pc-sub">day ' + s.daysOn + ' · ' + s.daysLeft + ' days left · ' +
+    s.needNow + '/day to finish with ' + REVIEW_DAYS + ' days spare</div></div></div>';
+}
+
+/* ============================================================
+   RECOMMENDATION  ·  rotates on a fixed clock
+   Deterministic: everyone sees the same slot at the same hour,
+   and it only advances when the interval elapses — no reshuffle
+   on every reload, which is what makes it feel like a schedule.
+   ============================================================ */
+var REC_CHOICES = [1, 2, 4, 8, 24];
+
+function recSlotIndex(hours) { return Math.floor(Date.now() / (3600e3 * hours)); }
+
+function weakestTypes(n) {
+  return TYPES.map(function (t) { return { t: t, w: windows(t) }; })
+    .filter(function (r) { return r.w.OVR && r.w.OVR.n >= 4; })
+    .sort(function (a, b) { return a.w.OVR.pct - b.w.OVR.pct; })
+    .slice(0, n || 3);
+}
+function daysSinceLast(mode) {
+  var last = DB.sessions.filter(function (x) { return x.mode === mode; }).slice(-1)[0];
+  if (!last) return 999;
+  return daysBetween(new Date(last.endedAt || last.startedAt), new Date());
+}
+
+function buildRecPool() {
+  var pool = [];
+  var pace = paceState();
+  var missed = missedIds().length;
+  var flagged = flaggedIds().length;
+  var pending = DB.vocab.filter(function (v) { return v.pending; }).length;
+  var weak = weakestTypes(3);
+  var attempted = DB.attempts.length;
+
+  if (missed >= 5) pool.push({
+    key: 'redemption', title: 'Clear the Redemption queue',
+    why: missed + ' questions are waiting for a second pass. Re-attempting a miss is worth more than a fresh question.',
+    cta: 'Start redemption', run: function () {
+      var ids = missedIds();
+      SESSION_LEN = Math.max(1, Math.min(30, ids.length));
+      startSession({ mode: 'untimed', label: 'Redemption', ids: ids });
+    }
+  });
+  if (weak.length) pool.push({
+    key: 'weak', title: 'Drill ' + weak[0].t,
+    why: 'Your weakest type at ' + weak[0].w.OVR.pct + '% over ' + weak[0].w.OVR.n + ' attempts.',
+    cta: 'Practise it untimed', run: function () { startSession({ mode: 'untimed', label: weak[0].t, filter: function (q) { return q.type === weak[0].t; } }); }
+  });
+  if (attempted >= 40 && daysSinceLast('mock') >= 10) pool.push({
+    key: 'mock', title: 'Sit a full Mock Test',
+    why: daysSinceLast('mock') === 999 ? 'You have not done one yet. Stamina is the thing timed sets cannot teach.'
+      : 'It has been ' + daysSinceLast('mock') + ' days since your last one.',
+    cta: 'Start mock', run: function () { $('btnMockTest').click(); }
+  });
+  if (pending >= 4) pool.push({
+    key: 'vocab', title: 'Define ' + pending + ' queued words',
+    why: 'Words you logged but never defined. Ten minutes clears the backlog.',
+    cta: 'Open Toolbox', run: function () { go('toolbox'); setTimeout(function () { document.querySelector('#toolTabs [data-tool="vocab"]').click(); }, 60); }
+  });
+  if (flagged >= 5) pool.push({
+    key: 'flagged', title: 'Revisit ' + flagged + ' flagged questions',
+    why: 'You marked these as shaky. Confirm they have stopped being shaky.',
+    cta: 'Practise flagged', run: function () { $('btnFlagged').click(); }
+  });
+  if (pace && pace.status === 'behind') pool.push({
+    key: 'catchup', title: 'Timed set of ' + Math.min(27, pace.needNow),
+    why: 'You are behind par. A timed block is the fastest honest way to close it.',
+    cta: 'Start timed', run: function () { SESSION_LEN = Math.min(27, Math.max(10, pace.needNow)); startSession({ mode: 'timed', label: 'Catch-up' }); }
+  });
+  if (weak.length > 1) pool.push({
+    key: 'weak2', title: 'Open book on ' + weak[1].t,
+    why: 'Second weakest at ' + weak[1].w.OVR.pct + '%. Work it with your notes beside you.',
+    cta: 'Open book', run: function () { startSession({ mode: 'openbook', label: weak[1].t, filter: function (q) { return q.type === weak[1].t; } }); }
+  });
+
+  pool.push({
+    key: 'quick', title: 'Quick Practice, ten minutes',
+    why: 'Untimed, finish whenever. Short and frequent beats long and rare.',
+    cta: 'Start quick', run: function () { $('btnQuickPractice').click(); }
+  });
+  return pool;
+}
+
+var REC_CURRENT = null;
+function renderRec() {
+  var slot = $('recSlot');
+  if (!slot) return;
+  var hours = (DB.prefs && DB.prefs.recHours) || 1;
+  var pool = buildRecPool();
+  var pick = pool[recSlotIndex(hours) % pool.length];
+  REC_CURRENT = pick;
+
+  var msLeft = (recSlotIndex(hours) + 1) * 3600e3 * hours - Date.now();
+  var mins = Math.max(0, Math.round(msLeft / 60000));
+  var nextTxt = mins >= 60 ? Math.floor(mins / 60) + 'h ' + (mins % 60) + 'm' : mins + 'm';
+
+  slot.innerHTML =
+    '<div class="rec"><div class="rc-ic">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/><circle cx="12" cy="12" r="3.5"/></svg>' +
+    '</div><div class="rc-body">' +
+    '<div class="rc-kicker">Do this next</div>' +
+    '<div class="rc-title">' + esc(pick.title) + '</div>' +
+    '<div class="rc-why">' + esc(pick.why) + '</div></div>' +
+    '<div class="rc-act">' +
+    '<button class="btn small" id="recGo">' + esc(pick.cta) + '</button>' +
+    '<select id="recFreq" title="How often this rotates">' +
+    REC_CHOICES.map(function (h) {
+      return '<option value="' + h + '"' + (h === hours ? ' selected' : '') + '>every ' + (h === 24 ? 'day' : h + 'h') + '</option>';
+    }).join('') + '</select>' +
+    '<span class="rc-next">next in ' + nextTxt + '</span></div></div>';
+
+  $('recGo').onclick = function () { if (REC_CURRENT) REC_CURRENT.run(); };
+  $('recFreq').onchange = function () {
+    DB.prefs.recHours = parseInt(this.value, 10) || 1;
+    save('prefs'); renderRec();
+  };
+}
+setInterval(function () {
+  if (!$('app').classList.contains('hidden') && $('page-dashboard').classList.contains('active')) renderRec();
+}, 60000);
+
+/* ============================================================
+   CALENDAR
+   ============================================================ */
+var CAL_VIEW = null;      // Date pinned to the 1st of the shown month
+var CAL_SEL = null;       // selected day key
+
+function calEvents(key) {
+  return (DB.calendar.events || []).filter(function (e) { return e.date === key; });
+}
+function calSave() { save('calendar'); }
+
+function buildPlan() {
+  var p = DB.profile || {};
+  if (!p.examDate) { toast('Set an exam date first'); return; }
+  var today = dayStart(new Date());
+  var exam = dayStart(parseKey(p.examDate));
+  var daysLeft = daysBetween(today, exam);
+  if (daysLeft < 1) { toast('Your exam date has passed'); return; }
+
+  // keep anything the user added by hand
+  var kept = (DB.calendar.events || []).filter(function (e) { return e.kind === 'custom' || e.done; });
+  var events = kept.slice();
+  var occupied = {};
+  kept.forEach(function (e) { occupied[e.date + '|' + e.kind] = 1; });
+
+  var remaining = Math.max(0, totalQ() - uniqueDone());
+  var reviewFrom = daysLeft - REVIEW_DAYS;          // last REVIEW_DAYS days = review only
+  var workDays = Math.max(1, reviewFrom);
+  var perDay = Math.max(1, Math.ceil(remaining / workDays));
+
+  for (var i = 0; i < daysLeft; i++) {
+    var d = new Date(today); d.setDate(d.getDate() + i);
+    var key = dayKey(d);
+
+    if (i >= reviewFrom) {
+      if (!occupied[key + '|review']) {
+        events.push({ id: uid('ev'), date: key, kind: 'review', count: 0,
+          label: 'Review mistakes — Redemption queue and question notes', done: false });
+      }
+      continue;
+    }
+    // a mock every 14th day, and one 7 days out, never inside the review window
+    var isMock = (i > 0 && i % 14 === 0) || (daysLeft - i === 7 + REVIEW_DAYS);
+    if (isMock && !occupied[key + '|mock']) {
+      events.push({ id: uid('ev'), date: key, kind: 'mock', count: 54, label: 'Mock Test — 2 modules', done: false });
+    } else if (!occupied[key + '|practice']) {
+      events.push({ id: uid('ev'), date: key, kind: 'practice', count: perDay,
+        label: perDay + ' questions', done: false });
+    }
+  }
+  DB.calendar = { events: events, builtAt: Date.now() };
+  calSave();
+  toast('Plan built — ' + perDay + ' questions/day');
+  renderCalendar();
+}
+
+function calStats() {
+  var today = dayKey(new Date());
+  var todays = calEvents(today);
+  var pending = (DB.calendar.events || []).filter(function (e) { return !e.done && e.date >= today; }).length;
+  return { todays: todays, pending: pending };
+}
+
+function renderCalHead() {
+  if (!$('calSummary')) return;
+  var st = calStats();
+  var p = DB.profile || {};
+  var bits = [];
+  if (!p.examDate) bits.push('no exam date set');
+  else if (!(DB.calendar.events || []).length) bits.push('no plan yet — open and build one');
+  else {
+    var t = st.todays.filter(function (e) { return !e.done; });
+    bits.push(t.length ? 'today: ' + t.map(function (e) { return e.kind === 'practice' ? e.count + ' questions' : e.label.split('—')[0].trim(); }).join(' · ')
+      : (st.todays.length ? 'today: done' : 'nothing scheduled today'));
+    bits.push(st.pending + ' upcoming');
+  }
+  $('calSummary').textContent = bits.join('  ·  ');
+}
+
+function renderCalendar() {
+  renderCalHead();
+  if (!CAL_VIEW) { CAL_VIEW = dayStart(new Date()); CAL_VIEW.setDate(1); }
+  var y = CAL_VIEW.getFullYear(), m = CAL_VIEW.getMonth();
+  $('calMonth').textContent = CAL_VIEW.toLocaleDateString(undefined, { month: 'long', year: 'numeric' });
+  $('calDow').innerHTML = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+    .map(function (d) { return '<div class="cal-dow">' + d + '</div>'; }).join('');
+
+  var first = new Date(y, m, 1);
+  var lead = (first.getDay() + 6) % 7;                 // Monday-first
+  var days = new Date(y, m + 1, 0).getDate();
+  var todayKey = dayKey(new Date());
+  var examKey = (DB.profile || {}).examDate || '';
+  var html = '';
+  for (var i = 0; i < lead; i++) html += '<div class="cal-cell pad"></div>';
+  for (var d = 1; d <= days; d++) {
+    var key = dayKey(new Date(y, m, d));
+    var evs = calEvents(key);
+    var cls = ['cal-cell'];
+    if (key === todayKey) cls.push('today');
+    if (key === CAL_SEL) cls.push('sel');
+    if (key < todayKey) cls.push('past');
+    if (key === examKey) cls.push('exam');
+    var qs = evs.filter(function (e) { return e.count; }).reduce(function (a, e) { return a + e.count; }, 0);
+    html += '<button class="' + cls.join(' ') + '" data-day="' + key + '">' +
+      '<span class="cd">' + d + '</span>' +
+      (key === examKey ? '<span class="cq" style="color:var(--oxide)">EXAM</span>' : (qs ? '<span class="cq">' + qs + 'q</span>' : '')) +
+      '<span class="cal-dots">' + evs.map(function (e) {
+        return '<i class="' + e.kind + (e.done ? ' done' : '') + '"></i>';
+      }).join('') + '</span></button>';
+  }
+  $('calGrid').innerHTML = html;
+  $('calGrid').querySelectorAll('[data-day]').forEach(function (b) {
+    b.onclick = function () { CAL_SEL = b.dataset.day; renderCalendar(); };
+  });
+  renderCalDay();
+}
+
+function renderCalDay() {
+  var box = $('calDay');
+  if (!CAL_SEL) { box.innerHTML = '<p class="sec-sub" style="margin:0">Pick a day to see or edit its plan.</p>'; return; }
+  var evs = calEvents(CAL_SEL);
+  var d = parseKey(CAL_SEL);
+  box.innerHTML = '<h4>' + d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' }) + '</h4>' +
+    (evs.length ? evs.map(function (e) {
+      return '<div class="cal-ev' + (e.done ? ' done' : '') + '">' +
+        '<span class="ce-k">' + e.kind + '</span>' +
+        '<span class="ce-t">' + esc(e.label) + '</span>' +
+        '<span class="ce-a">' +
+        (e.kind !== 'review' ? '<button class="btn tiny" data-run="' + e.id + '">Start</button>' : '') +
+        '<button class="btn tiny ghost" data-done="' + e.id + '">' + (e.done ? 'Undo' : 'Done') + '</button>' +
+        '<button class="btn tiny ghost" data-del="' + e.id + '">✕</button>' +
+        '</span></div>';
+    }).join('') : '<p class="sec-sub" style="margin:0 0 10px">Nothing scheduled.</p>') +
+    '<div class="addid" style="margin-top:10px">' +
+    '<input id="calNewLabel" placeholder="Add your own — e.g. 20 Transitions">' +
+    '<input id="calNewCount" type="number" min="0" placeholder="Qs" style="min-width:70px">' +
+    '<button class="btn small" id="calAdd">Add</button></div>';
+
+  box.querySelectorAll('[data-done]').forEach(function (b) {
+    b.onclick = function () {
+      var e = DB.calendar.events.filter(function (x) { return x.id === b.dataset.done; })[0];
+      if (e) { e.done = !e.done; calSave(); renderCalendar(); }
+    };
+  });
+  box.querySelectorAll('[data-del]').forEach(function (b) {
+    b.onclick = function () {
+      DB.calendar.events = DB.calendar.events.filter(function (x) { return x.id !== b.dataset.del; });
+      calSave(); renderCalendar();
+    };
+  });
+  box.querySelectorAll('[data-run]').forEach(function (b) {
+    b.onclick = function () {
+      var e = DB.calendar.events.filter(function (x) { return x.id === b.dataset.run; })[0];
+      if (!e) return;
+      if (e.kind === 'mock') { $('btnMockTest').click(); return; }
+      SESSION_LEN = Math.max(5, Math.min(54, e.count || 22));
+      startSession({ mode: 'untimed', label: 'Scheduled · ' + e.count + 'q' });
+    };
+  });
+  $('calAdd').onclick = function () {
+    var lbl = $('calNewLabel').value.trim();
+    if (!lbl) { toast('Give it a label'); return; }
+    var c = parseInt($('calNewCount').value, 10);
+    DB.calendar.events.push({ id: uid('ev'), date: CAL_SEL, kind: 'custom', count: isNaN(c) ? 0 : c, label: lbl, done: false });
+    calSave(); renderCalendar();
+  };
+}
+
+RENDER.calendar = function () {
+  renderCalendar();
+  var s = paceState();
+  $('calPace').innerHTML = s
+    ? '<div class="pace ' + s.status + '" style="margin-bottom:22px"><span class="pc-badge">' +
+      ({ behind: 'Behind', ontrack: 'On track', ahead: 'Ahead' }[s.status]) + '</span>' +
+      '<div class="pc-body"><div class="pc-line"><b>' + s.remaining + '</b> questions left · <b>' +
+      s.needNow + '/day</b> to finish with ' + REVIEW_DAYS + ' days spare</div>' +
+      '<div class="pc-sub">' + s.daysLeft + ' days to the exam · ' + s.done + ' of ' + s.total + ' done</div></div></div>'
+    : '<div class="pace" style="margin-bottom:22px"><span class="pc-badge" style="background:var(--paper-dim);color:var(--text-on-paper-soft)">No date</span>' +
+      '<div class="pc-body"><div class="pc-line">Set an exam date in your profile to build a plan.</div></div></div>';
+};
+$('calPrev').addEventListener('click', function () { CAL_VIEW.setMonth(CAL_VIEW.getMonth() - 1); renderCalendar(); });
+$('calNext').addEventListener('click', function () { CAL_VIEW.setMonth(CAL_VIEW.getMonth() + 1); renderCalendar(); });
+$('calBuild').addEventListener('click', function () {
+  if ((DB.calendar.events || []).length && !confirm('Rebuild the plan? Days you added yourself and anything ticked off are kept.')) return;
+  buildPlan();
+});
+$('calClear').addEventListener('click', function () {
+  if (!confirm('Clear every scheduled item?')) return;
+  DB.calendar = { events: [], builtAt: 0 }; calSave(); renderCalendar();
+});
+
+/* ============================================================
    PER-TYPE L10 TREND
    ============================================================ */
 var TYPE_COLORS = [
@@ -3334,6 +4120,68 @@ $('vAdd').addEventListener('click', function () {
 });
 
 /* ============================================================
+   LEADERBOARD
+   ============================================================ */
+RENDER.leaderboard = function () {
+  if (!AUTH.sid) {
+    $('lbBody').innerHTML = '<div class="empty"><b>Sign in required</b>The leaderboard reads from your account.</div>';
+    return;
+  }
+  $('lbBody').innerHTML = '<div class="empty"><b>Loading…</b>Fetching everyone\'s progress.</div>';
+  api('leaderboard', { sid: AUTH.sid }).then(function (r) {
+    if (!r.ok) {
+      $('lbBody').innerHTML = '<div class="empty"><b>Could not load</b>' + esc(r.error || '') + '</div>';
+      return;
+    }
+    LB_CACHE = r;
+    $('tabLeaderboard').classList.toggle('hidden', !(r.enabled || r.adminPreview));
+    paintLeaderboard();
+  });
+};
+
+function paintLeaderboard() {
+  var r = LB_CACHE;
+  if (!r) return;
+  if (!r.enabled && !r.adminPreview) {
+    $('lbDek').textContent = 'Currently switched off.';
+    $('lbBody').innerHTML = '<div class="empty"><b>Leaderboard is off</b>The administrator controls whether this is visible.</div>';
+    return;
+  }
+  var sort = (DB.prefs && DB.prefs.lbSort) || 'progress';
+  $('lbSortToggle').textContent = 'Sort: ' + sort;
+  $('lbDek').textContent = r.adminPreview
+    ? 'Switched off for everyone else — you are seeing it as administrator.'
+    : r.rows.length + ' people · progress out of ' + totalQ() + ' questions.';
+
+  var rows = r.rows.slice().sort(function (a, b) {
+    return sort === 'accuracy' ? (b.accuracy - a.accuracy) || (b.unique - a.unique)
+                               : (b.unique - a.unique) || (b.accuracy - a.accuracy);
+  });
+  if (!rows.length) {
+    $('lbBody').innerHTML = '<div class="empty"><b>Nobody has synced yet</b>Rows appear once people practise.</div>';
+    return;
+  }
+  $('lbBody').innerHTML =
+    '<div class="lb-head"><span>#</span><span>Name</span><span>Progress</span><span>Accuracy</span><span>Sets</span></div>' +
+    rows.map(function (x, i) {
+      var pctDone = Math.min(100, (x.unique / totalQ()) * 100);
+      return '<div class="lb-row' + (x.accountId === r.me ? ' me' : '') + (i === 0 ? ' top1' : '') + '">' +
+        '<div class="lb-rk">' + (i + 1) + '</div>' +
+        '<div><div class="lb-nm">' + esc(x.name || x.username) + (x.accountId === r.me ? ' <span class="badge">you</span>' : '') + '</div>' +
+        '<div class="lb-un">@' + esc(x.username) + '</div></div>' +
+        '<div><div class="lb-pg">' + x.unique + ' / ' + totalQ() + '</div>' +
+        '<div class="lb-bar"><i style="width:' + pctDone.toFixed(1) + '%"></i></div></div>' +
+        '<div class="lb-ac">' + x.accuracy + '%</div>' +
+        '<div class="lb-ss">' + x.sessions + '</div></div>';
+    }).join('');
+}
+$('lbRefresh').addEventListener('click', function () { RENDER.leaderboard(); });
+$('lbSortToggle').addEventListener('click', function () {
+  DB.prefs.lbSort = ((DB.prefs && DB.prefs.lbSort) === 'accuracy') ? 'progress' : 'accuracy';
+  save('prefs'); paintLeaderboard();
+});
+
+/* ============================================================
    ADMIN — master token only
    ============================================================ */
 function adm(op, extra) {
@@ -3354,6 +4202,10 @@ RENDER.admin = function () {
       return;
     }
     var toks = r.tokens || [], accs = r.accounts || [];
+    var st = r.settings || { leaderboard: false };
+    $('admLbTog').classList.toggle('on', !!st.leaderboard);
+    $('admLbLbl').textContent = 'Leaderboard ' + (st.leaderboard ? 'on' : 'off');
+    $('tabLeaderboard').classList.remove('hidden');   // master always sees it
     $('admTokSub').textContent = toks.length + ' issued · ' +
       toks.filter(function (t) { return t.boundDeviceId; }).length + ' bound · ' +
       toks.filter(function (t) { return t.revoked; }).length + ' revoked';
@@ -3382,19 +4234,22 @@ RENDER.admin = function () {
       }).join('') + '</tbody></table>';
 
     $('admAccounts').innerHTML = accs.length ? '<table class="grid"><thead><tr><th>User ID</th><th>Name</th>' +
-      '<th>Token</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead><tbody>' +
+      '<th class="numh">Done</th><th class="numh">Acc</th><th>Status</th><th>Actions</th></tr></thead><tbody>' +
       accs.map(function (a) {
         var master = a.isMaster;
+        var d = a.stats || {};
         return '<tr><td class="mono"><b>' + esc(a.username) + '</b></td><td>' + esc(a.name || '—') + '</td>' +
-          '<td class="mono">' + esc(a.token) + '</td>' +
+          '<td class="num mono">' + (d.unique != null ? d.unique + '/' + totalQ() : '—') + '</td>' +
+          '<td class="num mono">' + (d.attempted ? d.accuracy + '%' : '—') + '</td>' +
           '<td>' + (a.revoked ? '<span class="badge bad">revoked</span>' : '<span class="badge">active</span>') + '</td>' +
-          '<td class="mono">' + fmtDate(a.createdAt) + '</td>' +
           '<td><div class="act-row">' +
+          '<button class="btn tiny ghost" data-ai="' + esc(a.username) + '">Data</button>' +
           (master ? '<span class="muted">protected</span>' :
+            '<button class="btn tiny ghost" data-an="' + esc(a.username) + '">Rename</button>' +
             (a.revoked
               ? '<button class="btn tiny" data-ar="' + esc(a.username) + '">Restore</button>'
               : '<button class="btn tiny danger" data-av="' + esc(a.username) + '">Revoke</button>') +
-            '<button class="btn tiny ghost" data-ap="' + esc(a.username) + '">Reset password</button>' +
+            '<button class="btn tiny ghost" data-ap="' + esc(a.username) + '">Password</button>' +
             '<button class="btn tiny ghost" data-ad="' + esc(a.username) + '">Delete</button>') +
           '</div></td></tr>';
       }).join('') + '</tbody></table>'
@@ -3427,9 +4282,87 @@ RENDER.admin = function () {
       if (!pw) return;
       run('accountReset', { username: u, newPassword: pw }, 'Password reset for ' + u);
     });
+    wire('data-an', function (u) {
+      var nu = prompt('New user ID for "' + u + '"\n\n3-24 characters: letters, numbers, . _ -\nThey will need to log in again with the new ID.', u);
+      if (!nu || nu.trim().toLowerCase() === u) return;
+      run('renameUser', { username: u, newUsername: nu.trim().toLowerCase() }, 'Renamed to ' + nu.trim().toLowerCase());
+    });
+    wire('data-ai', function (u) { openUserDetail(u); });
   });
 };
 $('admRefresh').addEventListener('click', function () { RENDER.admin(); });
+$('admLbTog').addEventListener('click', function () {
+  var on = !this.classList.contains('on');
+  adm('setLeaderboard', { on: on }).then(function (r) {
+    if (!r.ok) { toast(r.error || 'Failed'); return; }
+    toast('Leaderboard ' + (on ? 'on' : 'off') + ' for everyone');
+    RENDER.admin();
+  });
+});
+
+/* full read-only view of one user's progress */
+function openUserDetail(username) {
+  modal('<h3>' + esc(username) + '</h3><p class="sh-sub">Loading…</p>', function () {});
+  adm('userDetail', { username: username }).then(function (r) {
+    if (!r.ok) { modal('<h3>Error</h3><p class="sh-sub">' + esc(r.error || '') + '</p>', function (m) {}); return; }
+    var d = r.data || {}, dg = r.digest || {}, acc = r.account || {};
+    var at = d.attempts || [];
+
+    var byType = {};
+    at.forEach(function (a) {
+      if (!a || !a.type) return;
+      byType[a.type] = byType[a.type] || { n: 0, c: 0 };
+      byType[a.type].n++; if (a.correct) byType[a.type].c++;
+    });
+    var typeRows = Object.keys(byType).sort(function (x, y) {
+      return (byType[x].c / byType[x].n) - (byType[y].c / byType[y].n);
+    }).map(function (t) {
+      var v = byType[t];
+      return '<tr><td>' + esc(t) + '</td><td class="num mono">' + v.n + '</td><td class="num mono">' +
+        Math.round((v.c / v.n) * 100) + '%</td></tr>';
+    }).join('');
+
+    var vocab = d.vocab || [];
+    var sessions = (d.sessions || []).slice(-8).reverse();
+
+    modal(
+      '<h3>' + esc(acc.name || username) + '</h3>' +
+      '<p class="sh-sub">@' + esc(acc.username) + ' · token ' + esc(acc.token || '—') +
+      ' · joined ' + fmtDate(acc.createdAt) + (acc.examDate ? ' · exam ' + esc(acc.examDate) : '') + '</p>' +
+
+      '<div class="ud-grid">' +
+      '<div class="ud-stat"><div class="n">' + (dg.unique || 0) + '</div><div class="l">of ' + totalQ() + ' seen</div></div>' +
+      '<div class="ud-stat"><div class="n">' + (dg.attempted || 0) + '</div><div class="l">attempts</div></div>' +
+      '<div class="ud-stat"><div class="n">' + (dg.accuracy || 0) + '%</div><div class="l">accuracy</div></div>' +
+      '<div class="ud-stat"><div class="n">' + (dg.sessions || 0) + '</div><div class="l">sessions</div></div>' +
+      '<div class="ud-stat"><div class="n">' + (dg.vocab || 0) + '</div><div class="l">vocab (' + (dg.vocabPending || 0) + ' pending)</div></div>' +
+      '<div class="ud-stat"><div class="n">' + (dg.qnotes || 0) + '</div><div class="l">q-notes</div></div>' +
+      '</div>' +
+
+      (typeRows ? '<div class="card-label">Accuracy by type · weakest first</div>' +
+        '<div class="tbl-wrap" style="max-height:190px;overflow:auto"><table class="grid"><thead><tr><th>Type</th>' +
+        '<th class="numh">n</th><th class="numh">%</th></tr></thead><tbody>' + typeRows + '</tbody></table></div>'
+        : '<p class="sh-sub">No attempts logged.</p>') +
+
+      (vocab.length ? '<div class="card-label" style="margin-top:14px">Vocab flagged (' + vocab.length + ')</div>' +
+        '<div style="max-height:130px;overflow:auto;font-size:12.5px;line-height:1.7">' +
+        vocab.map(function (v) {
+          return '<div>' + esc(v.word) + (v.pending ? ' <span class="badge idle">pending</span>' : '') +
+            (v.def1 ? ' <span class="muted">— ' + esc(v.def1) + '</span>' : '') + '</div>';
+        }).join('') + '</div>' : '') +
+
+      (sessions.length ? '<div class="card-label" style="margin-top:14px">Recent sessions</div>' +
+        '<div style="font-size:12px;line-height:1.7;font-family:var(--font-mono)">' +
+        sessions.map(function (x) {
+          return fmtDate(x.endedAt || x.startedAt) + ' · ' + esc(x.mode) + ' · ' + esc(x.label) +
+            ' · ' + x.correct + '/' + x.count;
+        }).join('<br>') + '</div>' : '') +
+
+      '<div style="display:flex;gap:10px;margin-top:18px"><button class="btn ghost small" style="flex:1" data-x="c">Close</button></div>',
+      function (m) { m.querySelector('[data-x=c]').onclick = closeModal; }
+    );
+  });
+}
 $('admAddToken').addEventListener('click', function () {
   modal('<h3>Issue a token</h3><p class="sh-sub">One token, one person, one browser. They redeem it once and then use their account.</p>' +
     '<div class="field"><label>Token</label><input id="atTok" class="token" maxlength="14" placeholder="GU10ABCDE"></div>' +
@@ -3540,11 +4473,7 @@ loadBank().then(function () {
         AUTH.account = r.account;
         var hadLocal = (DB.attempts && DB.attempts.length) || (DB.sessions && DB.sessions.length);
         applySnapshot(r.data, hadLocal ? 'merge' : 'replace');
-        DB.profile = Object.assign({}, DB.profile || {}, {
-          name: r.account.name, baseline: r.account.baseline, examDate: r.account.examDate,
-          token: r.account.token, username: r.account.username, accountId: r.account.id
-        });
-        saveLocalOnly('profile');
+        mergeProfileFromAccount(r.account);
         setSync('saved');
         openApp();
         if (hadLocal) pushNow();
