@@ -32,6 +32,12 @@ const SEED_TOKENS = [
 
 const SESSION_DAYS = 180;
 
+/* Suspension is a soft block: the person sees a generic maintenance notice
+   rather than anything that reveals they have been singled out. Distinct from
+   revocation, which says plainly that access was withdrawn. */
+const MAINTENANCE_MSG =
+  'The website is under maintenance. Please contact whom it may concern to resolve this issue.';
+
 function secret() {
   return process.env.MP_SECRET ||
          ('mp-derived-' + (process.env.BLOB_READ_WRITE_TOKEN || 'local-dev-fallback'));
@@ -164,7 +170,7 @@ function publicAccount(acc) {
     id: acc.id, username: acc.username, name: acc.name,
     baseline: acc.baseline, examDate: acc.examDate,
     token: acc.token, isMaster: acc.token === MASTER_TOKEN,
-    createdAt: acc.createdAt, revoked: !!acc.revoked
+    createdAt: acc.createdAt, revoked: !!acc.revoked, suspended: !!acc.suspended
   };
 }
 
@@ -202,6 +208,7 @@ function digestOf(acc, data) {
     joinedAt: acc.createdAt,
     examDate: acc.examDate || '',
     revoked: !!acc.revoked,
+    suspended: !!acc.suspended,
     lastActive: Date.now()
   };
 }
@@ -227,6 +234,7 @@ async function resolve(sid) {
   const acc = await getAccount(s.username);
   if (!acc) return { error: 'Account no longer exists.', code: 401 };
   if (acc.revoked) return { error: 'Access to this account has been revoked.', code: 403 };
+  if (acc.suspended) return { error: MAINTENANCE_MSG, code: 503, maintenance: true };
   const tk = await getToken(acc.token);
   if (!tk || tk.revoked) return { error: 'Your access token has been revoked.', code: 403 };
   return { acc, tk };
@@ -398,6 +406,7 @@ export default async function handler(req, res) {
           return res.status(401).json({ ok: false, error: 'Wrong user ID or password.' });
         }
         if (acc.revoked) return res.status(403).json({ ok: false, error: 'Access to this account has been revoked.' });
+        if (acc.suspended) return res.status(503).json({ ok: false, error: MAINTENANCE_MSG, maintenance: true });
         const tk = await getToken(acc.token);
         if (!tk || tk.revoked) return res.status(403).json({ ok: false, error: 'Your access token has been revoked.' });
 
@@ -413,7 +422,7 @@ export default async function handler(req, res) {
       /* -------- 4. pull the cloud snapshot -------- */
       case 'pull': {
         const r = await resolve(body.sid);
-        if (r.error) return res.status(r.code).json({ ok: false, error: r.error });
+        if (r.error) return res.status(r.code).json({ ok: false, error: r.error, maintenance: !!r.maintenance });
         const data = (await getData(r.acc.id)) || {};
         return res.status(200).json({ ok: true, account: publicAccount(r.acc), data });
       }
@@ -421,7 +430,7 @@ export default async function handler(req, res) {
       /* -------- 5. push the local snapshot -------- */
       case 'push': {
         const r = await resolve(body.sid);
-        if (r.error) return res.status(r.code).json({ ok: false, error: r.error });
+        if (r.error) return res.status(r.code).json({ ok: false, error: r.error, maintenance: !!r.maintenance });
         const data = (body.data && typeof body.data === 'object') ? body.data : {};
         const prev = (await getData(r.acc.id)) || {};
         data.rev = (prev.rev || 0) + 1;
@@ -434,7 +443,7 @@ export default async function handler(req, res) {
       /* -------- 6. profile edit -------- */
       case 'profile': {
         const r = await resolve(body.sid);
-        if (r.error) return res.status(r.code).json({ ok: false, error: r.error });
+        if (r.error) return res.status(r.code).json({ ok: false, error: r.error, maintenance: !!r.maintenance });
         const acc = r.acc;
         if (body.name != null) acc.name = String(body.name).slice(0, 60);
         if (body.baseline !== undefined) acc.baseline = body.baseline == null ? null : Number(body.baseline);
@@ -456,14 +465,14 @@ export default async function handler(req, res) {
       /* -------- 7. leaderboard -------- */
       case 'leaderboard': {
         const r = await resolve(body.sid);
-        if (r.error) return res.status(r.code).json({ ok: false, error: r.error });
+        if (r.error) return res.status(r.code).json({ ok: false, error: r.error, maintenance: !!r.maintenance });
         const st = await getSettings();
         const isMaster = r.acc.token === MASTER_TOKEN;
         if (!st.leaderboard && !isMaster) {
           return res.status(200).json({ ok: true, enabled: false, rows: [], me: r.acc.id });
         }
         const rows = (await readAll('st/'))
-          .filter(x => x && !x.revoked)
+          .filter(x => x && !x.revoked && !x.suspended)
           .map(x => ({
             accountId: x.accountId, name: x.name, username: x.username,
             unique: x.unique || 0, attempted: x.attempted || 0,
@@ -479,7 +488,7 @@ export default async function handler(req, res) {
       /* -------- 8. admin (master token only) -------- */
       case 'admin': {
         const r = await resolve(body.sid);
-        if (r.error) return res.status(r.code).json({ ok: false, error: r.error });
+        if (r.error) return res.status(r.code).json({ ok: false, error: r.error, maintenance: !!r.maintenance });
         if (r.acc.token !== MASTER_TOKEN) {
           return res.status(403).json({ ok: false, error: 'Administrator privileges required.' });
         }
@@ -596,6 +605,19 @@ export default async function handler(req, res) {
           await saveAccount(acc);
           const d = await getData(acc.id);
           if (d) await saveDigest(acc, d);
+          return res.status(200).json({ ok: true });
+        }
+
+        if (op === 'accountSuspend' || op === 'accountUnsuspend') {
+          const acc = await getAccount(body.username);
+          if (!acc) return res.status(404).json({ ok: false, error: 'No such account.' });
+          if (acc.token === MASTER_TOKEN) {
+            return res.status(400).json({ ok: false, error: 'The master account cannot be suspended.' });
+          }
+          acc.suspended = (op === 'accountSuspend');
+          await saveAccount(acc);
+          const sd = await getData(acc.id);
+          if (sd) await saveDigest(acc, sd);
           return res.status(200).json({ ok: true });
         }
 
